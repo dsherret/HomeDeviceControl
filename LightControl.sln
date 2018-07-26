@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightControl.Plugin.Yeeligh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightControl.Core", "LightControl.Core\LightControl.Core.csproj", "{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightControl.Test", "LightControl.Test\LightControl.Test.csproj", "{47B65979-2DB4-4891-A186-39F08F6DE4FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
