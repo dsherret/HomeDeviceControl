@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace LightControl.Core.LightBulbs
 {
     public interface ILightBulb : IDisposable
     {
-        string Id { get; }
+        Guid Id { get; }
+        bool IsConnected { get; }
+
         Task ConnectAsync();
         Task TurnOnAsync();
         Task TurnOffAsync();
-        Task SetRGBColorAsync(int r, int g, int b);
+        Task SetRGBColorAsync(Color color);
     }
 }

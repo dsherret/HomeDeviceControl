@@ -1,4 +1,7 @@
 ﻿using LightControl.Core.LightBulbs;
+using LightControl.Core.Utils;
+using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using YeelightAPI;
 
@@ -8,8 +11,9 @@ namespace LightControl.Plugin.Yeelight
     {
         private readonly Device _device;
 
-        internal YeelightBulb(Device device)
+        internal YeelightBulb(Guid id, Device device)
         {
+            Id = id;
             _device = device;
         }
 
@@ -18,26 +22,31 @@ namespace LightControl.Plugin.Yeelight
             _device.Dispose();
         }
 
-        public string Id => _device.Id;
+        public Guid Id { get; }
+        public bool IsConnected => _device.IsConnected;
 
         public Task ConnectAsync()
         {
+            // the API will disconnect then reconnect so avoid this behaviour
+            if (IsConnected)
+                return Task.CompletedTask;
+
             return _device.Connect();
         }
 
         public Task TurnOnAsync()
         {
-            return _device.TurnOn();
+            return _device.TurnOn(1000);
         }
 
         public Task TurnOffAsync()
         {
-            return _device.TurnOff();
+            return _device.TurnOff(1000);
         }
 
-        public Task SetRGBColorAsync(int r, int g, int b)
+        public Task SetRGBColorAsync(Color color)
         {
-            return _device.SetRGBColor(r, g, b);
+            return _device.SetRGBColor(color.R, color.G, color.B, 1000);
         }
     }
 }

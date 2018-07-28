@@ -19,29 +19,12 @@ namespace LightControl.Core
             _assemblies = GetPluginAssemblies().ToArray();
             if (!_assemblies.Any())
                 throw new Exception("Could not find any plugin assemblies.");
+
+            foreach (var discoverer in GetLightBulbDiscoverers())
+                LightBulbStore.AddDiscoverer(discoverer);
         }
 
-        public async Task<IEnumerable<ILightBulb>> GetLightBulbs()
-        {
-            var discovererType = typeof(ILightBulbDiscoverer);
-            var discoverers = GetDiscoverers().ToArray();
-
-            if (!discoverers.Any())
-                throw new Exception("Could not find any plugins containing a discoverer.");
-
-            var lightBulbs = await new AggregateLightBulbDiscoverer(discoverers).DiscoverAsync();
-            await Task.WhenAll(lightBulbs.Select(b => b.ConnectAsync()));
-            return lightBulbs;
-
-            IEnumerable<ILightBulbDiscoverer> GetDiscoverers()
-            {
-                return _assemblies
-                    .SelectMany(a => a.GetTypes())
-                    .Where(t => t.GetInterface(discovererType.FullName) != null)
-                    .Select(t => Activator.CreateInstance(t) as ILightBulbDiscoverer)
-                    .Where(d => d != null);
-            }
-        }
+        public LightBulbStore LightBulbStore { get; } = new LightBulbStore();
 
         public async Task<IEnumerable<ISensor>> GetSensors()
         {
@@ -58,6 +41,27 @@ namespace LightControl.Core
 
             return sensors;
         }
+
+        private IEnumerable<ILightBulbDiscoverer> GetLightBulbDiscoverers()
+        {
+            var discovererType = typeof(ILightBulbDiscoverer);
+            var discoverers = GetDiscoverers().ToArray();
+
+            if (!discoverers.Any())
+                throw new Exception("Could not find any plugins containing a discoverer.");
+
+            return discoverers;
+
+            IEnumerable<ILightBulbDiscoverer> GetDiscoverers()
+            {
+                return _assemblies
+                    .SelectMany(a => a.GetTypes())
+                    .Where(t => t.GetInterface(discovererType.FullName) != null)
+                    .Select(t => Activator.CreateInstance(t) as ILightBulbDiscoverer)
+                    .Where(d => d != null);
+            }
+        }
+
 
         private static IEnumerable<Assembly> GetPluginAssemblies()
         {

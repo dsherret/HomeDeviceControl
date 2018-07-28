@@ -17,8 +17,4 @@
     <ProjectReference Include="..\LightControl.Plugin.ZoozSensor\LightControl.Plugin.ZoozSensor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="State\" />
-  </ItemGroup>
-
 </Project>

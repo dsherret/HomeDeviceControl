@@ -1,18 +1,54 @@
-﻿using LightControl.Core.LightBulbs;
-using System.Collections.Generic;
+﻿using LightControl.Core;
+using LightControl.Core.LightBulbs;
+using LightControl.Core.Utils;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
 using YeelightAPI;
 
 namespace LightControl.Plugin.Yeelight
 {
-    public class YeelightBulbDiscoverer : ILightBulbDiscoverer
+    public sealed class YeelightBulbDiscoverer : ILightBulbDiscoverer, IDisposable
     {
-        public async Task<IEnumerable<ILightBulb>> DiscoverAsync()
+        private readonly UdpMessageListener _udpMessageListener = new UdpMessageListener(1982);
+
+        public YeelightBulbDiscoverer()
+        {
+            DiscoverLights();
+            _udpMessageListener.MessageReceived += UdpMessageListener_MessageReceived;
+        }
+
+        public void Dispose()
+        {
+            _udpMessageListener.MessageReceived -= UdpMessageListener_MessageReceived;
+            _udpMessageListener.Dispose();
+        }
+
+        public event EventHandler<LightBulbDiscoveredEventArgs> Discovered;
+
+        private async void DiscoverLights()
         {
             var devices = await DeviceLocator.Discover();
-            return devices.Select(d => new YeelightBulb(d))
-                .ToArray(); // collection could be modified so cache its current state
+
+            foreach (var device in devices.ToArray()) // collection could be modified by library so cache its current state while iterating
+                FireDiscovered(device.Id, device);
+        }
+
+        private void UdpMessageListener_MessageReceived(object sender, UdpMessageListener.MessageReceivedArgs args)
+        {
+            var isAdvertisement = args.Data.Any(line => line == "NTS: ssdp:alive");
+            if (!isAdvertisement)
+                return;
+
+            const string idPrefix = "id: ";
+            var id = args.Data.First(line => line.StartsWith(idPrefix)).Substring(idPrefix.Length);
+
+            FireDiscovered(id, new Device(args.Address.ToString()));
+        }
+
+        private async void FireDiscovered(string id, Device device)
+        {
+            await device.Connect();
+            Discovered?.Invoke(this, new LightBulbDiscoveredEventArgs(new YeelightBulb(GuidUtils.StringToGuid(id), device)));
         }
     }
 }

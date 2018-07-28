@@ -1,10 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace LightControl.Core.LightBulbs
 {
+    public class LightBulbDiscoveredEventArgs : EventArgs
+    {
+        public LightBulbDiscoveredEventArgs(ILightBulb lightBulb)
+        {
+            LightBulb = lightBulb;
+        }
+
+        public ILightBulb LightBulb { get; }
+    }
+
     public interface ILightBulbDiscoverer
     {
-        Task<IEnumerable<ILightBulb>> DiscoverAsync();
+        event EventHandler<LightBulbDiscoveredEventArgs> Discovered;
     }
 }

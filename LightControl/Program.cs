@@ -3,6 +3,7 @@ using LightControl.Communication.Server;
 using LightControl.Core;
 using LightControl.Core.LightBulbs;
 using LightControl.Core.Sensors;
+using LightControl.Core.Utils;
 using System;
 using System.Linq;
 using System.Threading;
@@ -17,17 +18,17 @@ namespace LightControl
 
         static async Task Main(string[] args)
         {
-            const string SUNROOM_LIGHT_ID = "0x0000000005e0eaf1";
+            var sunroomLightId = GuidUtils.StringToGuid("0x0000000005e0eaf1");
 
             _devicePowerStatusReceiver.PowerStatusChanged += DevicePowerStatusReceiver_PowerStatusChanged;
 
             RunServer();
 
             var pluginSystem = new PluginSystem();
-            var lightBulbs = (await pluginSystem.GetLightBulbs()).ToArray();
+            var lightBulbStore = pluginSystem.LightBulbStore;
             var sensors = (await pluginSystem.GetSensors()).ToArray();
 
-            var sunRoomBulb = lightBulbs.First(b => b.Id == SUNROOM_LIGHT_ID);
+            var sunRoomBulb = lightBulbStore.Get(sunroomLightId);
 
             //foreach (var lightBulb in lightBulbs)
             //{
@@ -42,7 +43,7 @@ namespace LightControl
 
             sensors.OfType<IMotionSensor>().First().MotionDetected += async (sender, a) =>
             {
-                Console.WriteLine("MOTION DETECTED");
+                Console.WriteLine("Detected motion");
                 await sunRoomBulb.IncrementOnAsync();
                 await Task.Delay(15000);
                 var result = await sunRoomBulb.IncrementOffAsync();
