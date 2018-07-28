@@ -1,5 +1,5 @@
-﻿using LightControl.Communication.Server;
-using LightControl.Computer;
+﻿using LightControl.Communication.Common;
+using LightControl.Communication.Server;
 using LightControl.Core;
 using LightControl.Core.LightBulbs;
 using LightControl.Core.Sensors;
@@ -12,16 +12,22 @@ namespace LightControl
 {
     class Program
     {
+        private static readonly DevicePowerStatusReceiver _devicePowerStatusReceiver = new DevicePowerStatusReceiver(Routes.DevicePowerStatus);
+        private static Server _server;
+
         static async Task Main(string[] args)
         {
             const string SUNROOM_LIGHT_ID = "0x0000000005e0eaf1";
+
+            _devicePowerStatusReceiver.PowerStatusChanged += DevicePowerStatusReceiver_PowerStatusChanged;
+
+            RunServer();
+
             var pluginSystem = new PluginSystem();
             var lightBulbs = (await pluginSystem.GetLightBulbs()).ToArray();
             var sensors = (await pluginSystem.GetSensors()).ToArray();
 
             var sunRoomBulb = lightBulbs.First(b => b.Id == SUNROOM_LIGHT_ID);
-            var powerStatusReceiver = new PowerStatusReceiver("/computer/power-status");
-            var computerStatus = new ComputerStatus(powerStatusReceiver, "DESKTOP-U8QP2IN");
 
             //foreach (var lightBulb in lightBulbs)
             //{
@@ -51,6 +57,23 @@ namespace LightControl
                 //sensor.Dispose();
             }
             Console.ReadKey();
+
+            _server.Dispose();
+        }
+
+        private static void DevicePowerStatusReceiver_PowerStatusChanged(object sender, DevicePowerStatusReceiver.DevicePowerStatusChangedEventArgs args)
+        {
+            switch (args.DevicePowerStatus.DeviceId)
+            {
+                //case DeviceIdentifiers.ComputerId:
+            }
+        }
+
+        static async void RunServer()
+        {
+            _server = new Server(8084);
+            _server.AddValueListener(_devicePowerStatusReceiver);
+            await _server.RunAsync();
         }
     }
 }

@@ -11,7 +11,8 @@ namespace LightControl.Plugin.Yeelight
         public async Task<IEnumerable<ILightBulb>> DiscoverAsync()
         {
             var devices = await DeviceLocator.Discover();
-            return devices.Select(d => new YeelightBulb(d));
+            return devices.Select(d => new YeelightBulb(d))
+                .ToArray(); // collection could be modified so cache its current state
         }
     }
 }

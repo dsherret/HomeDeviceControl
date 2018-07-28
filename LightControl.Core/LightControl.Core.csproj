@@ -8,4 +8,8 @@
     <PackageReference Include="CoordinateSharp" Version="1.1.3.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Devices\" />
+  </ItemGroup>
+
 </Project>

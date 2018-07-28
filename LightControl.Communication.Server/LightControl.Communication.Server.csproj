@@ -10,9 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="EmbedIO" Version="1.14.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LightControl.Communication.Common\LightControl.Communication.Common.csproj" />
     <ProjectReference Include="..\LightControl.Core\LightControl.Core.csproj" />
   </ItemGroup>
 
