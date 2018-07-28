@@ -5,9 +5,10 @@ namespace LightControl.Core.LightBulbs
 {
     public interface ILightBulb : IDisposable
     {
-        Task Connect();
-        Task TurnOn();
-        Task TurnOff();
-        Task SetRGBColor(int r, int g, int b);
+        string Id { get; }
+        Task ConnectAsync();
+        Task TurnOnAsync();
+        Task TurnOffAsync();
+        Task SetRGBColorAsync(int r, int g, int b);
     }
 }

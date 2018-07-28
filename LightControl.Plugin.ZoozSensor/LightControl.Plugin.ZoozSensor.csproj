@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ZWave4Net" Version="1.0.0.160" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LightControl.Core\LightControl.Core.csproj" />
+    <ProjectReference Include="..\LightControl.ZWave\LightControl.ZWave.csproj" />
+  </ItemGroup>
+
+</Project>

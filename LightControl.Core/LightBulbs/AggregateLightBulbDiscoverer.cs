@@ -13,9 +13,9 @@ namespace LightControl.Core.LightBulbs
             _lightBulbDiscoverers = lightBulbDiscoverers;
         }
 
-        public async Task<IEnumerable<ILightBulb>> Discover()
+        public async Task<IEnumerable<ILightBulb>> DiscoverAsync()
         {
-            var lightBulbCollections = await Task.WhenAll(_lightBulbDiscoverers.Select(d => d.Discover()));
+            var lightBulbCollections = await Task.WhenAll(_lightBulbDiscoverers.Select(d => d.DiscoverAsync()));
             return lightBulbCollections.SelectMany(b => b);
         }
     }

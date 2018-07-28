@@ -5,6 +5,6 @@ namespace LightControl.Core.LightBulbs
 {
     public interface ILightBulbDiscoverer
     {
-        Task<IEnumerable<ILightBulb>> Discover();
+        Task<IEnumerable<ILightBulb>> DiscoverAsync();
     }
 }

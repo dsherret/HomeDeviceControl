@@ -18,22 +18,24 @@ namespace LightControl.Plugin.Yeelight
             _device.Dispose();
         }
 
-        public Task Connect()
+        public string Id => _device.Id;
+
+        public Task ConnectAsync()
         {
             return _device.Connect();
         }
 
-        public Task TurnOn()
+        public Task TurnOnAsync()
         {
             return _device.TurnOn();
         }
 
-        public Task TurnOff()
+        public Task TurnOffAsync()
         {
             return _device.TurnOff();
         }
 
-        public Task SetRGBColor(int r, int g, int b)
+        public Task SetRGBColorAsync(int r, int g, int b)
         {
             return _device.SetRGBColor(r, g, b);
         }

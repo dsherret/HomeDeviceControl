@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
@@ -10,10 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LightControl.Communication.Server\LightControl.Communication.Server.csproj" />
+    <PackageReference Include="EmbedIO" Version="1.14.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LightControl.Core\LightControl.Core.csproj" />
-    <ProjectReference Include="..\LightControl.Plugin.Yeelight\LightControl.Plugin.Yeelight.csproj" />
-    <ProjectReference Include="..\LightControl.Plugin.ZoozSensor\LightControl.Plugin.ZoozSensor.csproj" />
   </ItemGroup>
 
 </Project>
