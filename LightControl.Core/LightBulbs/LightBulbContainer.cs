@@ -11,6 +11,7 @@ namespace LightControl.Core.LightBulbs
         {
             public bool IsPoweredOn { get; set; }
             public Color Color { get; set; }
+            public int Temperature { get; set; }
         }
 
         private readonly State _state = new State();
@@ -64,6 +65,18 @@ namespace LightControl.Core.LightBulbs
             return SyncState();
         }
 
+        public Task SetColorTemperature(int temperature)
+        {
+            _state.Temperature = temperature;
+            _pendingState.Add(nameof(_state.Temperature));
+            return SyncState();
+        }
+
+        public Task<bool> GetIsPoweredOn()
+        {
+            return _lightBulb?.GetIsPoweredOn() ?? Task.FromResult(false);
+        }
+
         private Task SyncState()
         {
             if (!IsConnected)
@@ -72,9 +85,11 @@ namespace LightControl.Core.LightBulbs
             var tasks = new List<Task>();
 
             if (_pendingState.Remove(nameof(_state.IsPoweredOn)))
-                tasks.Add(_state.IsPoweredOn ? _lightBulb.TurnOnAsync() : _lightBulb.TurnOffAsync());
+                tasks.Add(_lightBulb.ToggleOnAsync(_state.IsPoweredOn));
             if (_pendingState.Remove(nameof(_state.Color)))
                 tasks.Add(_lightBulb.SetRGBColorAsync(_state.Color));
+            if (_pendingState.Remove(nameof(_state.Temperature)))
+                tasks.Add(_lightBulb.SetColorTemperature(_state.Temperature));
 
             return Task.WhenAll(tasks);
         }

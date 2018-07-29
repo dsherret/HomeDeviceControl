@@ -12,26 +12,28 @@ namespace LightControl.Plugin.ZoozSensor
         private readonly ZWaveController _controller;
         private SensorMultiLevel _sensorCommand;
 
-        public ZoozLightSensor()
+        public ZoozLightSensor(int nodeId)
         {
             _controller = ZWaveControllerFactory.Instance.AcquireController();
+            SetupAsync(nodeId);
         }
 
         public void Dispose()
         {
-            _sensorCommand.Changed -= SensorCommand_Changed;
+            if (_sensorCommand != null)
+                _sensorCommand.Changed -= SensorCommand_Changed;
             _controller.Close();
         }
 
         public event EventHandler<LuminanceChangedEventArgs> LuminanceChanged;
 
-        public async Task SetupAsync()
+        private async void SetupAsync(int nodeId)
         {
             if (_sensorCommand != null)
                 return;
 
             var nodes = await _controller.GetNodes();
-            var node = nodes[5];
+            var node = nodes[(byte)nodeId];
             _sensorCommand = node.GetCommandClass<SensorMultiLevel>();
             _sensorCommand.Changed += SensorCommand_Changed;
         }

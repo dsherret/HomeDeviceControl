@@ -49,7 +49,7 @@ namespace LightControl.Communication.ClientApi
 
         private Task ClientPostValueAsync<T>(string route, T value)
         {
-            var content = new StringContent(JsonConvert.SerializeObject(new ValueObject<T>(value)), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
             return ClientPostAsync(route, content);
         }
 

@@ -26,22 +26,6 @@ namespace LightControl.Core
 
         public LightBulbStore LightBulbStore { get; } = new LightBulbStore();
 
-        public async Task<IEnumerable<ISensor>> GetSensors()
-        {
-            var sensorType = typeof(ISensor);
-            var sensors = _assemblies
-                .SelectMany(a => a.GetTypes())
-                .Where(t => t.GetInterface(sensorType.FullName) != null)
-                .Select(t => Activator.CreateInstance(t) as ISensor)
-                .Where(d => d != null)
-                .ToArray();
-
-            foreach (var sensor in sensors)
-                await sensor.SetupAsync();
-
-            return sensors;
-        }
-
         private IEnumerable<ILightBulbDiscoverer> GetLightBulbDiscoverers()
         {
             var discovererType = typeof(ILightBulbDiscoverer);

@@ -13,5 +13,8 @@ namespace LightControl.Core.LightBulbs
         Task TurnOnAsync();
         Task TurnOffAsync();
         Task SetRGBColorAsync(Color color);
+        Task SetColorTemperature(int temperature);
+
+        Task<bool> GetIsPoweredOn();
     }
 }

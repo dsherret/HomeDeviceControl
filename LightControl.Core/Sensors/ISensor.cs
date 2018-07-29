@@ -5,6 +5,5 @@ namespace LightControl.Core.Sensors
 {
     public interface ISensor : IDisposable
     {
-        Task SetupAsync();
     }
 }

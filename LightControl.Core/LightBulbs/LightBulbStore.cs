@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LightControl.Core.LightBulbs
 {
@@ -11,6 +12,12 @@ namespace LightControl.Core.LightBulbs
         public ILightBulb Get(Guid id)
         {
             return GetLightBulbInternal(id);
+        }
+
+        public ILightBulb[] GetAll()
+        {
+            lock (_lock)
+                return _lightBulbs.Values.ToArray();
         }
 
         internal void AddDiscoverer(ILightBulbDiscoverer discoverer)

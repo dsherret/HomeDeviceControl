@@ -12,26 +12,29 @@ namespace LightControl.Plugin.ZoozSensor
         private readonly ZWaveController _controller;
         private Basic _basicCommand;
 
-        public ZoozMotionSensor()
+        public ZoozMotionSensor(int nodeId)
         {
             _controller = ZWaveControllerFactory.Instance.AcquireController();
+            SetupAsync(nodeId);
         }
 
         public void Dispose()
         {
-            _basicCommand.Changed -= BasicCommand_Changed;
-            _controller.Close();
+            if (_basicCommand != null)
+                _basicCommand.Changed -= BasicCommand_Changed;
+            ZWaveControllerFactory.Instance.ReleaseController();
         }
 
         public event EventHandler MotionDetected;
 
-        public async Task SetupAsync()
+        private async void SetupAsync(int nodeId)
         {
             if (_basicCommand != null)
                 return;
 
             var nodes = await _controller.GetNodes();
-            var node = nodes[5];
+            var node = nodes[(byte)nodeId];
+
             _basicCommand = node.GetCommandClass<Basic>();
             _basicCommand.Changed += BasicCommand_Changed;
         }

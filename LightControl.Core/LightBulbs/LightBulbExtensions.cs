@@ -36,5 +36,12 @@ namespace LightControl.Core.LightBulbs
                 return Task.FromResult(false);
             }
         }
+
+        public static Task ToggleOnAsync(this ILightBulb bulb, bool isOn)
+        {
+            if (isOn)
+                return bulb.TurnOnAsync();
+            return bulb.TurnOffAsync();
+        }
     }
 }

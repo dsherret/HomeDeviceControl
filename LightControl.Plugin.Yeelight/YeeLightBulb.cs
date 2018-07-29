@@ -1,5 +1,4 @@
 ﻿using LightControl.Core.LightBulbs;
-using LightControl.Core.Utils;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -34,6 +33,12 @@ namespace LightControl.Plugin.Yeelight
             return _device.Connect();
         }
 
+        public async Task<bool> GetIsPoweredOn()
+        {
+            var result = await _device.GetProp(YeelightAPI.Models.PROPERTIES.power);
+            return ((string)result) == "on";
+        }
+
         public Task TurnOnAsync()
         {
             return _device.TurnOn(1000);
@@ -47,6 +52,11 @@ namespace LightControl.Plugin.Yeelight
         public Task SetRGBColorAsync(Color color)
         {
             return _device.SetRGBColor(color.R, color.G, color.B, 1000);
+        }
+
+        public Task SetColorTemperature(int temperature)
+        {
+            return _device.SetColorTemperature(temperature, 1000);
         }
     }
 }
