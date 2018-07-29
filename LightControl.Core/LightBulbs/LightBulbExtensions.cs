@@ -20,7 +20,7 @@ namespace LightControl.Core.LightBulbs
             {
                 count.Value++;
                 if (count.Value == 1)
-                    return bulb.TurnOnAsync();
+                    return bulb.SetPowerAsync(true);
                 return Task.CompletedTask;
             }
         }
@@ -32,16 +32,9 @@ namespace LightControl.Core.LightBulbs
             {
                 count.Value--;
                 if (count.Value == 0)
-                    return bulb.TurnOffAsync().ContinueWith(_ => true);
+                    return bulb.SetPowerAsync(false).ContinueWith(_ => true);
                 return Task.FromResult(false);
             }
-        }
-
-        public static Task ToggleOnAsync(this ILightBulb bulb, bool isOn)
-        {
-            if (isOn)
-                return bulb.TurnOnAsync();
-            return bulb.TurnOffAsync();
         }
     }
 }

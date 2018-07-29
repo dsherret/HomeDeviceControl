@@ -23,7 +23,7 @@ namespace LightControl.Plugin.Yeelight
             _udpMessageListener.Dispose();
         }
 
-        public event EventHandler<LightBulbDiscoveredEventArgs> Discovered;
+        public event EventHandler<LightBulbEventArgs> Discovered;
 
         private async void DiscoverLights()
         {
@@ -48,7 +48,7 @@ namespace LightControl.Plugin.Yeelight
         private async void FireDiscovered(string id, Device device)
         {
             await device.Connect();
-            Discovered?.Invoke(this, new LightBulbDiscoveredEventArgs(new YeelightBulb(GuidUtils.StringToGuid(id), device)));
+            Discovered?.Invoke(this, new LightBulbEventArgs(new YeelightBulb(GuidUtils.StringToGuid(id), device)));
         }
     }
 }

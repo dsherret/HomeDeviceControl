@@ -46,7 +46,6 @@ namespace LightControl.Core
             }
         }
 
-
         private static IEnumerable<Assembly> GetPluginAssemblies()
         {
             var isPluginFile = new Regex(@".*\.Plugin\..*\.dll$", RegexOptions.IgnoreCase);

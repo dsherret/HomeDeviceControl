@@ -2,10 +2,9 @@
 using LightControl.Communication.Server;
 using LightControl.Core;
 using LightControl.Core.Environment;
-using LightControl.Core.LightBulbs;
-using LightControl.Plugin.ZoozSensor;
+using LightControl.LightBulbs;
+using LightControl.Config;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +13,7 @@ namespace LightControl
     class Program
     {
         private static readonly DevicePowerStatusReceiver _devicePowerStatusReceiver = new DevicePowerStatusReceiver(Routes.DevicePowerStatus);
+        private static LightBulbFactory _lightBulbFactory;
         private static Server _server;
 
         static async Task Main(string[] args)
@@ -22,55 +22,38 @@ namespace LightControl
             RunServer();
 
             var pluginSystem = new PluginSystem();
-            var lightBulbStore = pluginSystem.LightBulbStore;
-            var sunRoomBulb = lightBulbStore.Get(DeviceIdentifiers.SunroomLightId);
-            var motionSensor = new ZoozMotionSensor(5);
-            var lightSensor = new ZoozLightSensor(5);
+            _lightBulbFactory = new LightBulbFactory(pluginSystem.LightBulbStore);
+
+            SunRoomConfig.Setup(homeState, _lightBulbFactory, _devicePowerStatusReceiver);
 
             // hook up stuff that could change
-            var sunAltitudeChecker = new SunAltitudeChecker(new GeoLocation
+            var sunCalculator = new SunCalculator(new GeoLocation
             {
                 Latitute = 43.653908,
                 Longitude = -79.384293
-            }, TimeSpan.FromMinutes(1));
-            sunAltitudeChecker.AltitudeChecked += (sender, e) =>
+            });
+            var timer = new System.Timers.Timer();
+            timer.Interval = 5_000;
+            timer.Elapsed += (sender, e) =>
             {
                 homeState.UpdateState(state =>
                 {
-                    state.SunAltitude = e.Altitude;
-                    return state;
+                    state.SunAltitude = sunCalculator.GetSunAltitude(DateTime.Now);
+                    state.CurrentTime = DateTime.Now;
                 });
             };
-
-            _devicePowerStatusReceiver.PowerStatusChanged += (sender, e) =>
-            {
-                if (e.DevicePowerStatus.DeviceId == DeviceIdentifiers.ComputerId)
-                {
-                    homeState.UpdateState(state =>
-                    {
-                        state.IsComputerOn = e.DevicePowerStatus.IsPoweredOn;
-                        return state;
-                    });
-                }
-            };
+            timer.Start();
 
             // handle changing temperature
             homeState.StateUpdated += async (sender, e) =>
             {
-                var temperature = GetTemperatureForAltitude(e.NewState.SunAltitude);
+                /*var temperature = GetTemperatureForState(e.NewState);
                 var tasks = new List<Task>();
 
                 foreach (var lightBulb in lightBulbStore.GetAll())
-                    tasks.Add(lightBulb.SetColorTemperature(temperature));
+                    tasks.Add(lightBulb.SetTemperatureAsync(temperature));
 
-                await Task.WhenAll(tasks);
-            };
-
-            // handle turning on sunroom light when computer turns on or off
-            homeState.StateUpdated += async (sender, e) =>
-            {
-                if (e.PreviousState.IsComputerOn != e.NewState.IsComputerOn)
-                    await sunRoomBulb.ToggleOnAsync(e.NewState.IsComputerOn);
+                await Task.WhenAll(tasks);*/
             };
 
             //foreach (var lightBulb in lightBulbs)
@@ -79,32 +62,12 @@ namespace LightControl
             //await lightBulb.SetRGBColor(200, 100, 0);
             //}
 
-            lightSensor.LuminanceChanged += (sender, a) =>
-            {
-                Console.WriteLine("Luminance: " + a.Value);
-            };
-
-            motionSensor.MotionDetected += async (sender, a) =>
-            {
-                Console.WriteLine("Detected motion");
-                /*await sunRoomBulb.IncrementOnAsync();
-                await Task.Delay(15000);
-                var result = await sunRoomBulb.IncrementOffAsync();
-                if (result)
-                    Console.WriteLine("OFF");*/
-            };
 
             new ManualResetEvent(false).WaitOne();
             Console.WriteLine("FINI");
             Console.ReadKey();
 
-            lightSensor.Dispose();
-            motionSensor.Dispose();
             _server.Dispose();
-        }
-
-        private static void DevicePowerStatusReceiver_PowerStatusChanged(object sender, DevicePowerStatusReceiver.DevicePowerStatusChangedEventArgs args)
-        {
         }
 
         private static async void RunServer()
@@ -114,12 +77,19 @@ namespace LightControl
             await _server.RunAsync();
         }
 
+        private static int GetTemperatureForState(HomeState newState)
+        {
+            if (newState.CurrentTime.TimeOfDay > new TimeSpan(23, 0, 0) || newState.CurrentTime.TimeOfDay < new TimeSpan(6, 0, 0))
+                return 2000;
+            return GetTemperatureForAltitude(newState.SunAltitude);
+        }
+
         private static int GetTemperatureForAltitude(double altitude)
         {
             const double MAX_ALTITUDE = 5;
             const double MIN_ALTITUDE = -12;
-            const int MAX_TEMP = 4000;
-            const int MIN_TEMP = 2000;
+            const int MAX_TEMP = 4500;
+            const int MIN_TEMP = 2500;
             if (altitude > MAX_ALTITUDE)
                 return MAX_TEMP;
             if (altitude < MIN_ALTITUDE)

@@ -12,10 +12,12 @@ namespace LightControl.Core.LightBulbs
             public bool IsPoweredOn { get; set; }
             public Color Color { get; set; }
             public int Temperature { get; set; }
+            public int Brightness { get; set; }
         }
 
         private readonly State _state = new State();
         private readonly HashSet<string> _pendingState = new HashSet<string>();
+        private readonly object _lock = new object();
         private ILightBulb _lightBulb;
 
         public LightBulbContainer(Guid id)
@@ -25,10 +27,34 @@ namespace LightControl.Core.LightBulbs
 
         internal void SetLightBulb(ILightBulb lightBulb)
         {
-            _lightBulb?.Dispose();
-            _lightBulb = lightBulb;
+            lock (_lock)
+            {
+                if (_lightBulb != null)
+                {
+                    _lightBulb.PowerStatusChanged -= LightBulb_PowerStatusChanged;
+                    _lightBulb.BrightnessChanged -= LightBulb_BrightnessChanged;
+                    _lightBulb.TemperatureChanged -= LightBulb_TemperatureChanged;
+                    _lightBulb.ColorChanged -= LightBulb_ColorChanged;
+                }
+
+                _lightBulb?.Dispose();
+                _lightBulb = lightBulb;
+
+                if (_lightBulb != null)
+                {
+                    _lightBulb.PowerStatusChanged += LightBulb_PowerStatusChanged; ;
+                    _lightBulb.BrightnessChanged += LightBulb_BrightnessChanged;
+                    _lightBulb.TemperatureChanged += LightBulb_TemperatureChanged;
+                    _lightBulb.ColorChanged += LightBulb_ColorChanged;
+                }
+            }
             var unusedTask = ConnectAsync();
         }
+
+        public event EventHandler<LightBulbPropertyChangedEventArgs<bool>> PowerStatusChanged;
+        public event EventHandler<LightBulbPropertyChangedEventArgs<int>> BrightnessChanged;
+        public event EventHandler<LightBulbPropertyChangedEventArgs<int>> TemperatureChanged;
+        public event EventHandler<LightBulbPropertyChangedEventArgs<Color>> ColorChanged;
 
         public Guid Id { get; }
         public bool IsConnected => _lightBulb?.IsConnected ?? false;
@@ -44,37 +70,52 @@ namespace LightControl.Core.LightBulbs
             _lightBulb?.Dispose();
         }
 
-        public Task TurnOnAsync()
+        public Task SetPowerAsync(bool power)
         {
-            _state.IsPoweredOn = true;
+            _state.IsPoweredOn = power;
             _pendingState.Add(nameof(_state.IsPoweredOn));
             return SyncState();
         }
 
-        public Task TurnOffAsync()
+        public Task SetBrightnessAsync(int brightness)
         {
-            _state.IsPoweredOn = false;
-            _pendingState.Add(nameof(_state.IsPoweredOn));
+            _state.Brightness = brightness;
+            _pendingState.Add(nameof(_state.Brightness));
             return SyncState();
         }
 
-        public Task SetRGBColorAsync(Color color)
+        public Task SetColorAsync(Color color)
         {
             _state.Color = color;
             _pendingState.Add(nameof(_state.Color));
             return SyncState();
         }
 
-        public Task SetColorTemperature(int temperature)
+        public Task SetTemperatureAsync(int temperature)
         {
             _state.Temperature = temperature;
             _pendingState.Add(nameof(_state.Temperature));
             return SyncState();
         }
 
-        public Task<bool> GetIsPoweredOn()
+        public Task<bool> GetPowerAsync()
         {
-            return _lightBulb?.GetIsPoweredOn() ?? Task.FromResult(false);
+            return _lightBulb?.GetPowerAsync() ?? Task.FromResult(false);
+        }
+
+        public Task<int> GetBrightnessAsync()
+        {
+            return _lightBulb?.GetBrightnessAsync() ?? Task.FromResult(0);
+        }
+
+        public Task<Color> GetColorAsync()
+        {
+            return _lightBulb?.GetColorAsync() ?? Task.FromResult(Color.FromArgb(0));
+        }
+
+        public Task<int> GetTemperatureAsync()
+        {
+            return _lightBulb?.GetTemperatureAsync() ?? Task.FromResult(0);
         }
 
         private Task SyncState()
@@ -85,13 +126,51 @@ namespace LightControl.Core.LightBulbs
             var tasks = new List<Task>();
 
             if (_pendingState.Remove(nameof(_state.IsPoweredOn)))
-                tasks.Add(_lightBulb.ToggleOnAsync(_state.IsPoweredOn));
+                tasks.Add(_lightBulb.SetPowerAsync(_state.IsPoweredOn));
             if (_pendingState.Remove(nameof(_state.Color)))
-                tasks.Add(_lightBulb.SetRGBColorAsync(_state.Color));
+                tasks.Add(_lightBulb.SetColorAsync(_state.Color));
+            if (_pendingState.Remove(nameof(_state.Brightness)))
+                tasks.Add(_lightBulb.SetBrightnessAsync(_state.Brightness));
             if (_pendingState.Remove(nameof(_state.Temperature)))
-                tasks.Add(_lightBulb.SetColorTemperature(_state.Temperature));
+                tasks.Add(_lightBulb.SetTemperatureAsync(_state.Temperature));
 
             return Task.WhenAll(tasks);
+        }
+
+        private void LightBulb_PowerStatusChanged(object sender, LightBulbPropertyChangedEventArgs<bool> e)
+        {
+            if (_state.IsPoweredOn == e.Value)
+                return;
+
+            _state.IsPoweredOn = e.Value;
+            PowerStatusChanged?.Invoke(this, e);
+        }
+
+        private void LightBulb_BrightnessChanged(object sender, LightBulbPropertyChangedEventArgs<int> e)
+        {
+            if (_state.Brightness == e.Value)
+                return;
+
+            _state.Brightness = e.Value;
+            BrightnessChanged?.Invoke(this, e);
+        }
+
+        private void LightBulb_TemperatureChanged(object sender, LightBulbPropertyChangedEventArgs<int> e)
+        {
+            if (_state.Temperature == e.Value)
+                return;
+
+            _state.Temperature = e.Value;
+            TemperatureChanged?.Invoke(this, e);
+        }
+
+        private void LightBulb_ColorChanged(object sender, LightBulbPropertyChangedEventArgs<Color> e)
+        {
+            if (_state.Color == e.Value)
+                return;
+
+            _state.Color = e.Value;
+            ColorChanged?.Invoke(this, e);
         }
     }
 }
