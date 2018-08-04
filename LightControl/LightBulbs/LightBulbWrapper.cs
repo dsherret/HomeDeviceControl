@@ -1,4 +1,5 @@
 ﻿using LightControl.Core.LightBulbs;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -9,13 +10,14 @@ namespace LightControl.LightBulbs
         private readonly ILightBulb _lightBulb;
         private bool _isColorDirty;
         private bool _isBrightnessDirty;
-        private bool _isTemperatureDirty;
 
         public LightBulbWrapper(ILightBulb lightBulb)
         {
             _lightBulb = lightBulb;
             InitializeDirtyListeners();
         }
+
+        public event EventHandler<LightBulbWrapperEventArgs> PowerChanged;
 
         public Task<bool> GetPowerAsync()
         {
@@ -58,7 +60,7 @@ namespace LightControl.LightBulbs
 
         public Task SetTemperatureAsync(int temperature)
         {
-            if (_isTemperatureDirty)
+            if (_isColorDirty)
                 return Task.CompletedTask;
             return _lightBulb.SetTemperatureAsync(temperature);
         }
@@ -67,14 +69,23 @@ namespace LightControl.LightBulbs
         {
             _lightBulb.PowerStatusChanged += (sender, e) =>
             {
-                _isColorDirty = false;
-                _isBrightnessDirty = false;
-                _isTemperatureDirty = false;
+                ClearDirtyState();
+                PowerChanged?.Invoke(this, new LightBulbWrapperEventArgs(this));
+            };
+            _lightBulb.Connected += (sender, e) =>
+            {
+                ClearDirtyState();
             };
 
             _lightBulb.ColorChanged += (sender, e) => _isColorDirty = true;
-            _lightBulb.TemperatureChanged += (sender, e) => _isTemperatureDirty = true;
+            _lightBulb.TemperatureChanged += (sender, e) => _isColorDirty = true;
             _lightBulb.BrightnessChanged += (sender, e) => _isBrightnessDirty = true;
+
+            void ClearDirtyState()
+            {
+                _isColorDirty = false;
+                _isBrightnessDirty = false;
+            }
         }
     }
 }

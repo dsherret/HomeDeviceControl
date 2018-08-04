@@ -1,14 +1,11 @@
-﻿using System;
+﻿using LightControl.Core.Common;
 
 namespace LightControl.Core.LightBulbs
 {
-    public class LightBulbEventArgs : EventArgs
+    public class LightBulbEventArgs : ValueEventArgs<ILightBulb>
     {
-        public LightBulbEventArgs(ILightBulb lightBulb)
+        public LightBulbEventArgs(ILightBulb value) : base(value)
         {
-            LightBulb = lightBulb;
         }
-
-        public ILightBulb LightBulb { get; }
     }
 }

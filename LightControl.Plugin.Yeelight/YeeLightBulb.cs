@@ -26,6 +26,7 @@ namespace LightControl.Plugin.Yeelight
             _device.Dispose();
         }
 
+        public event EventHandler Connected;
         public event EventHandler<LightBulbPropertyChangedEventArgs<bool>> PowerStatusChanged;
         public event EventHandler<LightBulbPropertyChangedEventArgs<int>> BrightnessChanged;
         public event EventHandler<LightBulbPropertyChangedEventArgs<int>> TemperatureChanged;
@@ -34,13 +35,14 @@ namespace LightControl.Plugin.Yeelight
         public Guid Id { get; }
         public bool IsConnected => _device.IsConnected;
 
-        public Task ConnectAsync()
+        public async Task ConnectAsync()
         {
             // the API will disconnect then reconnect so avoid this behaviour
             if (IsConnected)
-                return Task.CompletedTask;
+                return;
 
-            return _device.Connect();
+            await _device.Connect();
+            Connected?.Invoke(this, EventArgs.Empty);
         }
 
         public async Task<bool> GetPowerAsync()

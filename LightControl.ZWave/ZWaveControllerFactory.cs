@@ -21,6 +21,7 @@ namespace LightControl.ZWave
             {
                 if (_controller == null)
                 {
+                    // todo: make this handle the case where the z wave controller is down
                     _controller = new ZWaveController("COM4");
                     _controller.Open();
                 }

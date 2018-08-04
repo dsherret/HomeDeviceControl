@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LightControl.Core.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LightControl
 {
@@ -7,7 +10,16 @@ namespace LightControl
         public double SunAltitude { get; set; }
         public DateTime CurrentTime { get; set; }
 
-        public SunRoom SunRoom { get; set; }
+        private SunRoom _sunRoom;
+        public SunRoom SunRoom
+        {
+            get => _sunRoom;
+            set
+            {
+                _sunRoom = value;
+                value.SetHomeState(this);
+            }
+        }
 
         public HomeState Clone()
         {
@@ -29,9 +41,13 @@ namespace LightControl
 
     public class SunRoom : IEquatable<SunRoom>
     {
+        private HomeState _homeState;
+
         public bool IsComputerOn { get; set; }
         public int Luminance { get; set; }
         public DateTime LastMotionDetected { get; set; }
+
+        public bool IsDark => Luminance < 30 || _homeState.SunAltitude < 0;
 
         public SunRoom Clone()
         {
@@ -49,6 +65,11 @@ namespace LightControl
                 && Luminance == other.Luminance
                 && LastMotionDetected == other.LastMotionDetected;
         }
+
+        internal void SetHomeState(HomeState homeState)
+        {
+            _homeState = homeState;
+        }
     }
 
     public class HomeStateContainer
@@ -65,28 +86,57 @@ namespace LightControl
             public HomeState NewState { get; }
         }
 
+        private readonly AsyncEventContainer<StateChangedEventArgs> _stateChangedEventContainer = new AsyncEventContainer<StateChangedEventArgs>();
+        private readonly AsyncCoordinationLock _coordinationLock;
+        private readonly object _lock = new object();
         private HomeState _state = new HomeState
         {
             SunAltitude = 100,
             SunRoom = new SunRoom
             {
                 IsComputerOn = false,
-                LastMotionDetected = DateTime.Now.AddDays(-1)
+                LastMotionDetected = DateTime.Now.AddDays(-1),
+                Luminance = 100
             },
             CurrentTime = DateTime.Now
         };
 
-        public event EventHandler<StateChangedEventArgs> StateUpdated;
-
-        public void UpdateState(Action<HomeState> update)
+        public HomeStateContainer(AsyncCoordinationLock coordinationLock)
         {
-            var previousState = _state;
+            _coordinationLock = coordinationLock;
+        }
 
-            _state = _state.Clone();
-            update(_state);
+        public HomeState GetCurrentState()
+        {
+            lock (_lock)
+                return _state;
+        }
 
-            if (!previousState.Equals(_state))
-                StateUpdated?.Invoke(this, new StateChangedEventArgs(previousState, _state));
+        public async void OnStateUpdated(Func<StateChangedEventArgs, Task> action)
+        {
+            await _coordinationLock.DoActionAsync(() =>
+            {
+                _stateChangedEventContainer.Add(action);
+            });
+        }
+
+        public async void UpdateState(Action<HomeState> update)
+        {
+            await _coordinationLock.DoActionAsync(async () =>
+            {
+                HomeState previousState;
+                HomeState newState;
+                lock (_lock)
+                {
+                    previousState = _state;
+                    newState = previousState.Clone();
+                    update(newState);
+                    _state = newState;
+                }
+
+                if (!previousState.Equals(newState))
+                    await _stateChangedEventContainer.InvokeAsync(new StateChangedEventArgs(previousState, newState));
+            });
         }
     }
 }

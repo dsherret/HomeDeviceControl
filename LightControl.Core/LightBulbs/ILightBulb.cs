@@ -16,6 +16,7 @@ namespace LightControl.Core.LightBulbs
 
     public interface ILightBulb : IDisposable
     {
+        event EventHandler Connected;
         event EventHandler<LightBulbPropertyChangedEventArgs<bool>> PowerStatusChanged;
         event EventHandler<LightBulbPropertyChangedEventArgs<int>> BrightnessChanged;
         event EventHandler<LightBulbPropertyChangedEventArgs<int>> TemperatureChanged;

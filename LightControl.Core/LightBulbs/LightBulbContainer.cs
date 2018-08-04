@@ -31,6 +31,7 @@ namespace LightControl.Core.LightBulbs
             {
                 if (_lightBulb != null)
                 {
+                    _lightBulb.Connected -= Connected;
                     _lightBulb.PowerStatusChanged -= LightBulb_PowerStatusChanged;
                     _lightBulb.BrightnessChanged -= LightBulb_BrightnessChanged;
                     _lightBulb.TemperatureChanged -= LightBulb_TemperatureChanged;
@@ -42,7 +43,8 @@ namespace LightControl.Core.LightBulbs
 
                 if (_lightBulb != null)
                 {
-                    _lightBulb.PowerStatusChanged += LightBulb_PowerStatusChanged; ;
+                    _lightBulb.Connected += Connected;
+                    _lightBulb.PowerStatusChanged += LightBulb_PowerStatusChanged;
                     _lightBulb.BrightnessChanged += LightBulb_BrightnessChanged;
                     _lightBulb.TemperatureChanged += LightBulb_TemperatureChanged;
                     _lightBulb.ColorChanged += LightBulb_ColorChanged;
@@ -51,6 +53,7 @@ namespace LightControl.Core.LightBulbs
             var unusedTask = ConnectAsync();
         }
 
+        public event EventHandler Connected;
         public event EventHandler<LightBulbPropertyChangedEventArgs<bool>> PowerStatusChanged;
         public event EventHandler<LightBulbPropertyChangedEventArgs<int>> BrightnessChanged;
         public event EventHandler<LightBulbPropertyChangedEventArgs<int>> TemperatureChanged;
@@ -63,6 +66,7 @@ namespace LightControl.Core.LightBulbs
         {
             await (_lightBulb?.ConnectAsync() ?? Task.CompletedTask);
             await SyncState();
+            Connected?.Invoke(this, EventArgs.Empty);
         }
 
         public void Dispose()
@@ -118,23 +122,31 @@ namespace LightControl.Core.LightBulbs
             return _lightBulb?.GetTemperatureAsync() ?? Task.FromResult(0);
         }
 
-        private Task SyncState()
+        private async Task SyncState()
         {
             if (!IsConnected)
-                return Task.CompletedTask;
+                return;
 
             var tasks = new List<Task>();
 
-            if (_pendingState.Remove(nameof(_state.IsPoweredOn)))
+            if (_pendingState.Contains(nameof(_state.IsPoweredOn)))
                 tasks.Add(_lightBulb.SetPowerAsync(_state.IsPoweredOn));
-            if (_pendingState.Remove(nameof(_state.Color)))
+            if (_pendingState.Contains(nameof(_state.Color)))
                 tasks.Add(_lightBulb.SetColorAsync(_state.Color));
-            if (_pendingState.Remove(nameof(_state.Brightness)))
+            if (_pendingState.Contains(nameof(_state.Brightness)))
                 tasks.Add(_lightBulb.SetBrightnessAsync(_state.Brightness));
-            if (_pendingState.Remove(nameof(_state.Temperature)))
+            if (_pendingState.Contains(nameof(_state.Temperature)))
                 tasks.Add(_lightBulb.SetTemperatureAsync(_state.Temperature));
 
-            return Task.WhenAll(tasks);
+            try
+            {
+                await Task.WhenAll(tasks);
+                _pendingState.Clear();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
         }
 
         private void LightBulb_PowerStatusChanged(object sender, LightBulbPropertyChangedEventArgs<bool> e)

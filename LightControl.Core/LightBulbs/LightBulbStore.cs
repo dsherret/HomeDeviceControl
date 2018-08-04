@@ -52,8 +52,9 @@ namespace LightControl.Core.LightBulbs
 
         private void Discoverer_Discovered(object sender, LightBulbEventArgs e)
         {
-            Console.WriteLine($"Discovered: {e.LightBulb.Id}");
-            GetLightBulbInternal(e.LightBulb.Id).SetLightBulb(e.LightBulb);
+            var lightBulb = e.Value;
+            Console.WriteLine($"Discovered: {lightBulb.Id}");
+            GetLightBulbInternal(lightBulb.Id).SetLightBulb(lightBulb);
         }
 
         private LightBulbContainer GetLightBulbInternal(Guid id)
@@ -80,7 +81,10 @@ namespace LightControl.Core.LightBulbs
 
         private void FireAddedEvent(ILightBulb bulb)
         {
-            ((EventHandler<LightBulbEventArgs>)_eventHandlerList[nameof(Added)])?.Invoke(this, new LightBulbEventArgs(bulb));
+            EventHandler<LightBulbEventArgs> handler;
+            lock (_lock)
+                handler = (EventHandler<LightBulbEventArgs>)_eventHandlerList[nameof(Added)];
+            handler?.Invoke(this, new LightBulbEventArgs(bulb));
         }
     }
 }
