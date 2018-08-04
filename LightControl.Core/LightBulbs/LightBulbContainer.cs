@@ -104,22 +104,37 @@ namespace LightControl.Core.LightBulbs
 
         public Task<bool> GetPowerAsync()
         {
-            return _lightBulb?.GetPowerAsync() ?? Task.FromResult(false);
+            return GetResultOrDefault(_lightBulb?.GetPowerAsync(), false);
         }
 
         public Task<int> GetBrightnessAsync()
         {
-            return _lightBulb?.GetBrightnessAsync() ?? Task.FromResult(0);
+            return GetResultOrDefault(_lightBulb?.GetBrightnessAsync(), 0);
         }
 
         public Task<Color> GetColorAsync()
         {
-            return _lightBulb?.GetColorAsync() ?? Task.FromResult(Color.FromArgb(0));
+            return GetResultOrDefault(_lightBulb?.GetColorAsync(), Color.FromArgb(0));
         }
 
         public Task<int> GetTemperatureAsync()
         {
-            return _lightBulb?.GetTemperatureAsync() ?? Task.FromResult(0);
+            return GetResultOrDefault(_lightBulb?.GetTemperatureAsync(), 0);
+        }
+
+        private async Task<T> GetResultOrDefault<T>(Task<T> task, T defaultValue)
+        {
+            try
+            {
+                if (task == null)
+                    return defaultValue;
+                return await task;
+            }
+            catch (Exception ex) // could be a connection lost exception or something similar
+            {
+                Logger.Log(ex);
+                return defaultValue;
+            }
         }
 
         private async Task SyncState()
