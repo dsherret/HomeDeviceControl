@@ -66,6 +66,9 @@ namespace LightControl.Config
                     }
                 }
 
+                if (!oldState.IsDark && newState.IsDark && newState.IsComputerOn)
+                    await sunRoomBulb.SetPowerAsync(true);
+
                 // when it detects motion while the computer is off, turn on the light if necessary
                 if (oldState.LastMotionDetected != newState.LastMotionDetected && !newState.IsComputerOn && newState.IsDark)
                 {

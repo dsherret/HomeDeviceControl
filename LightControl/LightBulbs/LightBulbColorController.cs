@@ -20,14 +20,15 @@ namespace LightControl.LightBulbs
             _homeStateContainer = homeStateContainer;
 
             var timer = new System.Timers.Timer();
-            timer.Interval = 5_000;
+            timer.Interval = 60_000 * 2;
             timer.Elapsed += async (sender, e) =>
             {
-                var lightBulbs = GetTrackedLightBulbs();
-                foreach (var lightBulb in lightBulbs)
-                    await UpdateLightBulbAsync(lightBulb);
+                await UpdateLightBulbsAsync();
             };
             timer.Start();
+
+            // hack: wait for the environment state to update on start
+            Task.Delay(500).ContinueWith(_ => UpdateLightBulbsAsync());
         }
 
         public async void HandleLightBulb(LightBulbWrapper bulb)
@@ -37,6 +38,7 @@ namespace LightControl.LightBulbs
                 if (!_trackedLightBulbs.Contains(bulb))
                 {
                     _trackedLightBulbs.Add(bulb);
+                    bulb.Connected += LightBulb_Connected;
                     bulb.PowerChanged += LightBulb_PowerChanged;
                 }
             }
@@ -48,13 +50,26 @@ namespace LightControl.LightBulbs
             lock (_lock)
             {
                 _trackedLightBulbs.Remove(bulb);
+                bulb.Connected -= LightBulb_Connected;
                 bulb.PowerChanged -= LightBulb_PowerChanged;
             }
+        }
+
+        private async void LightBulb_Connected(object sender, LightBulbWrapperEventArgs e)
+        {
+            await UpdateLightBulbAsync(e.Value);
         }
 
         private async void LightBulb_PowerChanged(object sender, LightBulbWrapperEventArgs e)
         {
             await UpdateLightBulbAsync(e.Value);
+        }
+
+        private async Task UpdateLightBulbsAsync()
+        {
+            var lightBulbs = GetTrackedLightBulbs();
+            foreach (var lightBulb in lightBulbs)
+                await UpdateLightBulbAsync(lightBulb);
         }
 
         private async Task UpdateLightBulbAsync(LightBulbWrapper bulb)

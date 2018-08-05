@@ -47,7 +47,7 @@ namespace LightControl
         public int Luminance { get; set; }
         public DateTime LastMotionDetected { get; set; }
 
-        public bool IsDark => Luminance < 30 || _homeState.SunAltitude < 0;
+        public bool IsDark => Luminance < 30 || _homeState.SunAltitude < 3;
 
         public SunRoom Clone()
         {

@@ -30,19 +30,25 @@ namespace LightControl
             timer.Interval = 5_000;
             timer.Elapsed += (sender, e) =>
             {
-                homeContext.HomeStateContainer.UpdateState(state =>
-                {
-                    state.SunAltitude = sunCalculator.GetSunAltitude(DateTime.Now);
-                    state.CurrentTime = DateTime.Now;
-                });
+                UpdateState();
             };
             timer.Start();
+            UpdateState();
 
             new ManualResetEvent(false).WaitOne();
             Console.WriteLine("FINI");
             Console.ReadKey();
 
             server.Dispose();
+
+            void UpdateState()
+            {
+                homeContext.HomeStateContainer.UpdateState(state =>
+                {
+                    state.SunAltitude = sunCalculator.GetSunAltitude(DateTime.Now);
+                    state.CurrentTime = DateTime.Now;
+                });
+            }
         }
 
         private static async Task<Server> RunServerAsync(HomeContext homeContext)
