@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,10 +12,10 @@ namespace LightControl.Core.Utils
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
         private readonly Func<Task> _startAction;
         private readonly Func<Task> _endAction;
-        private readonly TimeSpan _delay;
+        private readonly Func<TimeSpan> _delay;
         private CancellationTokenSource _cts;
 
-        public StartResetableEndActioner(Func<Task> startAction, Func<Task> endAction, TimeSpan delay)
+        public StartResetableEndActioner(Func<Task> startAction, Func<Task> endAction, Func<TimeSpan> delay)
         {
             _startAction = startAction;
             _endAction = endAction;
@@ -53,7 +51,7 @@ namespace LightControl.Core.Utils
 
         private async Task TryDoEndAction(CancellationToken token)
         {
-            await Task.Delay(_delay, token);
+            await Task.Delay(_delay(), token);
             await _semaphore.WaitAsync();
 
             try

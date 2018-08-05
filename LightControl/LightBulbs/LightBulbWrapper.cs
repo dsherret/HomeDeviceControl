@@ -16,6 +16,8 @@ namespace LightControl.LightBulbs
             InitializeDirtyListeners();
         }
 
+        public Guid Id => _lightBulb.Id;
+
         public event EventHandler<LightBulbWrapperEventArgs> Connected;
         public event EventHandler<LightBulbWrapperEventArgs> PowerChanged;
 

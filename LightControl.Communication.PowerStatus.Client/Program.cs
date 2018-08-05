@@ -29,9 +29,7 @@ namespace LightControl.Communication.PowerStatus.Client
             }
 
             using (var client = new ClientApi.Client("http://localhost:8084"))
-            {
                 await client.UpdateDevicePowerStatus(deviceId, isPoweredOn);
-            }
 
             return 0;
         }

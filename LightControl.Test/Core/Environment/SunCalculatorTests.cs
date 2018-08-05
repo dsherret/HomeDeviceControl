@@ -6,7 +6,7 @@ namespace LightControl.Test.Core.Environment
 {
     public class SunCalculatorTest
     {
-        private readonly SunCalculator _sunCalculator = new SunCalculator(new GeoLocation
+        private readonly SunCalculator _sunCalculator = new SunCalculator(() => new GeoLocation
         {
             Latitute = 43.653908,
             Longitude = -79.384293

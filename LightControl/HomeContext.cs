@@ -16,7 +16,7 @@ namespace LightControl
             DevicePowerStatusReceiver = new DevicePowerStatusReceiver(Routes.DevicePowerStatus);
             HomeStateContainer = new HomeStateContainer(CoordinationLock);
             LightBulbFactory = new LightBulbFactory(pluginSystem.LightBulbStore);
-            LightBulbColorController = new LightBulbColorController(CoordinationLock, HomeStateContainer);
+            LightBulbColorController = new LightBulbColorController(HomeStateContainer);
 
             LightBulbFactory.Added += (sender, e) =>
             {

@@ -5,13 +5,13 @@ namespace LightControl.Core.Environment
 {
     public class SunCalculator
     {
-        private readonly GeoLocation _location;
+        private readonly Func<GeoLocation> _location;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="location">Location to get the sun information for.</param>
-        public SunCalculator(GeoLocation location)
+        public SunCalculator(Func<GeoLocation> location)
         {
             _location = location;
         }
@@ -22,7 +22,8 @@ namespace LightControl.Core.Environment
         /// <param name="dateTime">The current date time.</param>
         public double GetSunAltitude(DateTime dateTime)
         {
-            var coordinate = new Coordinate(_location.Latitute, _location.Longitude, dateTime.ToUniversalTime());
+            var location = _location();
+            var coordinate = new Coordinate(location.Latitute, location.Longitude, dateTime.ToUniversalTime());
             return coordinate.CelestialInfo.SunAltitude;
         }
     }

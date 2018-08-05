@@ -132,7 +132,7 @@ namespace LightControl.Core.LightBulbs
             }
             catch (Exception ex) // could be a connection lost exception or something similar
             {
-                Logger.Log(ex);
+                Logger.Log(this, LogLevel.Error, ex);
                 return defaultValue;
             }
         }
@@ -160,7 +160,7 @@ namespace LightControl.Core.LightBulbs
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Log(this, LogLevel.Error, ex);
             }
         }
 

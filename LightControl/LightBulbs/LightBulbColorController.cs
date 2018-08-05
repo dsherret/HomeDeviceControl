@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+using LightControl.Core;
 
 namespace LightControl.LightBulbs
 {
@@ -11,24 +12,13 @@ namespace LightControl.LightBulbs
     {
         private readonly object _lock = new object();
         private readonly HashSet<LightBulbWrapper> _trackedLightBulbs = new HashSet<LightBulbWrapper>();
-        private readonly AsyncCoordinationLock _coordinationLock;
         private readonly HomeStateContainer _homeStateContainer;
 
-        public LightBulbColorController(AsyncCoordinationLock coordinationLock, HomeStateContainer homeStateContainer)
+        public LightBulbColorController(HomeStateContainer homeStateContainer)
         {
-            _coordinationLock = coordinationLock;
             _homeStateContainer = homeStateContainer;
 
-            var timer = new System.Timers.Timer();
-            timer.Interval = 60_000 * 2;
-            timer.Elapsed += async (sender, e) =>
-            {
-                await UpdateLightBulbsAsync();
-            };
-            timer.Start();
-
-            // hack: wait for the environment state to update on start
-            Task.Delay(500).ContinueWith(_ => UpdateLightBulbsAsync());
+            homeStateContainer.OnStateUpdated(_ => UpdateLightBulbsAsync());
         }
 
         public async void HandleLightBulb(LightBulbWrapper bulb)
@@ -40,6 +30,7 @@ namespace LightControl.LightBulbs
                     _trackedLightBulbs.Add(bulb);
                     bulb.Connected += LightBulb_Connected;
                     bulb.PowerChanged += LightBulb_PowerChanged;
+                    Logger.Log(this, LogLevel.Info, $"Handling color of bulb: {bulb.Id}");
                 }
             }
             await UpdateLightBulbAsync(bulb);
@@ -52,6 +43,7 @@ namespace LightControl.LightBulbs
                 _trackedLightBulbs.Remove(bulb);
                 bulb.Connected -= LightBulb_Connected;
                 bulb.PowerChanged -= LightBulb_PowerChanged;
+                Logger.Log(this, LogLevel.Info, $"Unhandling color of bulb: {bulb.Id}");
             }
         }
 
@@ -74,19 +66,16 @@ namespace LightControl.LightBulbs
 
         private async Task UpdateLightBulbAsync(LightBulbWrapper bulb)
         {
-            await _coordinationLock.DoActionAsync(async () =>
-            {
-                if (!(await bulb.GetPowerAsync()))
-                    return;
+            if (!(await bulb.GetPowerAsync()))
+                return;
 
-                var state = _homeStateContainer.GetCurrentState();
-                var color = GetColorForState(state);
-                if (color.HasValue)
-                    await bulb.SetColorAsync(color.Value);
-                else
-                    await bulb.SetTemperatureAsync(GetTemperatureForState(state));
-                await bulb.SetBrightnessAsync(GetBrightnessForState(state));
-            });
+            var state = _homeStateContainer.GetCurrentState();
+            var color = GetColorForState(state);
+            if (color.HasValue)
+                await bulb.SetColorAsync(color.Value);
+            else
+                await bulb.SetTemperatureAsync(GetTemperatureForState(state));
+            await bulb.SetBrightnessAsync(GetBrightnessForState(state));
         }
 
         private LightBulbWrapper[] GetTrackedLightBulbs()
@@ -97,21 +86,23 @@ namespace LightControl.LightBulbs
 
         private static int GetBrightnessForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay > new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(0, 30, 0))
                 return 50;
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(0, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+                return 10;
             return 100;
         }
 
         private static Color? GetColorForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay > new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
                 return Color.FromArgb(255, 1, 1);
             return null;
         }
 
         private static int GetTemperatureForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay > new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(6, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(6, 0, 0))
                 return 2000;
             return GetTemperatureForAltitude(state.SunAltitude);
         }

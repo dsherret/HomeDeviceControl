@@ -1,18 +1,66 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace LightControl.Core
 {
-    // todo: improve this
+    public enum LogLevel
+    {
+        Info,
+        Error
+    }
+
     public static class Logger
     {
-        public static void Log(Exception ex)
+        public static void Configure(string configLocation)
         {
-            Console.WriteLine("EXCEPTION: " + ex.Message);
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo(configLocation));
         }
 
-        public static void Log(string message)
+        public static void Log(object type, LogLevel level, Exception ex)
         {
+            Log(type, level, null, ex);
+        }
 
+        public static void Log(object type, LogLevel level, string message, Exception ex)
+        {
+            var logger = GetLogger(type);
+            switch (level)
+            {
+                case LogLevel.Error:
+                    logger.Error(message, ex);
+                    break;
+                case LogLevel.Info:
+                    logger.Info(message, ex);
+                    break;
+                default:
+                    throw new NotImplementedException($"Not implemented level: {level}");
+            }
+        }
+
+        public static void Log(object type, LogLevel level, string message)
+        {
+            var logger = GetLogger(type);
+            switch (level)
+            {
+                case LogLevel.Error:
+                    logger.Error(message);
+                    break;
+                case LogLevel.Info:
+                    logger.Info(message);
+                    break;
+                default:
+                    throw new NotImplementedException($"Not implemented level: {level}");
+            }
+        }
+
+        private static ILog GetLogger(object type)
+        {
+            var resolvedType = type is Type typeAsType ? typeAsType : type.GetType();
+            return LogManager.GetLogger(resolvedType);
         }
     }
 }

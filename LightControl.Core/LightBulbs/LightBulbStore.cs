@@ -53,7 +53,7 @@ namespace LightControl.Core.LightBulbs
         private void Discoverer_Discovered(object sender, LightBulbEventArgs e)
         {
             var lightBulb = e.Value;
-            Console.WriteLine($"Discovered: {lightBulb.Id}");
+            Logger.Log(this, LogLevel.Info, $"Discovered: {lightBulb.Id}");
             GetLightBulbInternal(lightBulb.Id).SetLightBulb(lightBulb);
         }
 

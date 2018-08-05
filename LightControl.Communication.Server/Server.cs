@@ -1,4 +1,5 @@
 ﻿using LightControl.Communication.Common;
+using LightControl.Core;
 using Newtonsoft.Json;
 using System;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace LightControl.Communication.Server
 
         public void AddValueListener<T>(IValueListener<T> listener)
         {
-            Console.WriteLine($"Adding listener at route: {listener.UrlRoute}");
+            Logger.Log(this, LogLevel.Info, $"Adding server listener at route: {listener.UrlRoute}");
             GetModule().AddHandler(listener.UrlRoute, HttpVerbs.Post, (context, token) => {
                 var tType = typeof(T);
                 if (tType == typeof(bool) || tType == typeof(string) || tType == typeof(int))

@@ -1,4 +1,5 @@
-﻿using LightControl.Core.LightBulbs;
+﻿using LightControl.Core;
+using LightControl.Core.LightBulbs;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -123,7 +124,7 @@ namespace LightControl.Plugin.Yeelight
 
         private void Device_OnError(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine($"Device error: {e.ExceptionObject}");
+            Logger.Log(this, LogLevel.Error, "Device error.", e.ExceptionObject as Exception);
         }
     }
 }

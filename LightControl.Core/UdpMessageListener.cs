@@ -78,7 +78,7 @@ namespace LightControl.Core
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error listening for UDP message: " + ex.Message);
+                    Logger.Log(this, LogLevel.Error, "Error listening for UDP message.", ex);
 
                     // wait and try again
                     await Task.Delay(10_000);

@@ -1,12 +1,9 @@
-﻿using LightControl.Communication.Common;
-using LightControl.Communication.Server;
+﻿using LightControl.Communication.Server;
 using LightControl.Core;
 using LightControl.Core.Environment;
-using LightControl.LightBulbs;
 using LightControl.Config;
 using System;
 using System.Threading;
-using LightControl.Core.Utils;
 using System.Threading.Tasks;
 
 namespace LightControl
@@ -15,19 +12,21 @@ namespace LightControl
     {
         static async Task Main(string[] args)
         {
+            Logger.Configure("log4net.config");
+
             var homeContext = new HomeContext();
             var server = await RunServerAsync(homeContext);
 
             SunRoomConfig.Setup(homeContext);
 
             // hook up stuff that could change
-            var sunCalculator = new SunCalculator(new GeoLocation
+            var sunCalculator = new SunCalculator(() => new GeoLocation
             {
-                Latitute = 43.653908,
-                Longitude = -79.384293
+                Latitute = Settings.Default.Latitude,
+                Longitude = Settings.Default.Longitude
             });
             var timer = new System.Timers.Timer();
-            timer.Interval = 5_000;
+            timer.Interval = 30_000;
             timer.Elapsed += (sender, e) =>
             {
                 UpdateState();
@@ -53,7 +52,7 @@ namespace LightControl
 
         private static async Task<Server> RunServerAsync(HomeContext homeContext)
         {
-            var server = new Server(8084);
+            var server = new Server(Settings.Default.ServerPort);
             server.AddValueListener(homeContext.DevicePowerStatusReceiver);
             await server.RunAsync();
             return server;

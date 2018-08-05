@@ -1,6 +1,5 @@
 ﻿using LightControl.Core.Utils;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace LightControl
@@ -47,7 +46,8 @@ namespace LightControl
         public int Luminance { get; set; }
         public DateTime LastMotionDetected { get; set; }
 
-        public bool IsDark => Luminance < 30 || _homeState.SunAltitude < 3;
+        public bool IsDark => Luminance < Settings.Default.SunroomMotionDarkLuminance
+            || _homeState.SunAltitude < Settings.Default.SunroomMotionDarkSunAltitude;
 
         public SunRoom Clone()
         {
