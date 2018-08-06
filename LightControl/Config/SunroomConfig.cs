@@ -60,7 +60,7 @@ namespace LightControl.Config
                             Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned on. Ensuring light is on since it's dark.");
                             await sunRoomBulb.SetPowerAsync(true);
                         }
-                        homeContext.LightBulbColorController.HandleLightBulb(sunRoomBulb);
+                        homeContext.LightBulbBrightnessController.HandleLightBulb(sunRoomBulb);
                     }
                     else
                     {
@@ -80,7 +80,7 @@ namespace LightControl.Config
                 // turn on the light if the computer is on and it's become dark
                 if (!oldState.IsDark && newState.IsDark && newState.IsComputerOn)
                 {
-                    Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom is dark and computer is on. Ensure light is turned on.");
+                    Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom is dark and computer is on. Turning light on.");
                     await sunRoomBulb.SetPowerAsync(true);
                 }
 
@@ -91,7 +91,7 @@ namespace LightControl.Config
                     {
 
                         Logger.Log(typeof(SunroomConfig), LogLevel.Info,
-                            $"Sunroom is dark, computer is off, and motion was detected. Ensure light is dimly turned on.");
+                            $"Sunroom is dark, computer is off, and motion was detected. Turning light dimly on.");
                         await dimmedActioner.DoActions();
                     }
                 }
@@ -102,7 +102,7 @@ namespace LightControl.Config
         {
             return new StartResetableEndActioner(async () =>
             {
-                homeContext.LightBulbColorController.UnhandleLightBulb(sunRoomBulb);
+                homeContext.LightBulbBrightnessController.UnhandleLightBulb(sunRoomBulb);
                 await Task.WhenAll(
                     sunRoomBulb.SetPowerAsync(true),
                     sunRoomBulb.SetBrightnessAsync(Settings.Default.SunroomMotionDimmedBrightness)
@@ -124,7 +124,7 @@ namespace LightControl.Config
                         Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom bulb has changed state since being dimly lit so state will be left alone.");
                     }
 
-                    homeContext.LightBulbColorController.HandleLightBulb(sunRoomBulb);
+                    homeContext.LightBulbBrightnessController.HandleLightBulb(sunRoomBulb);
                 });
             }, () => TimeSpan.FromSeconds(Settings.Default.SunroomMotionDimmedSeconds));
         }

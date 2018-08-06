@@ -17,13 +17,14 @@ namespace LightControl
             HomeStateContainer = new HomeStateContainer(CoordinationLock);
             LightBulbFactory = new LightBulbFactory(pluginSystem.LightBulbStore);
             LightBulbColorController = new LightBulbColorController(HomeStateContainer);
+            LightBulbBrightnessController = new LightBulbBrightnessController(HomeStateContainer);
 
             LightBulbFactory.Added += (sender, e) =>
             {
-                // start watching the bulb for color changes
+                // start watching the bulb for color and brightness changes
                 LightBulbColorController.HandleLightBulb(e.Value);
+                LightBulbBrightnessController.HandleLightBulb(e.Value);
             };
-
         }
 
         public LightBulbFactory LightBulbFactory { get; }
@@ -31,6 +32,8 @@ namespace LightControl
         public AsyncCoordinationLock CoordinationLock { get; }
 
         public LightBulbColorController LightBulbColorController { get; }
+
+        public LightBulbBrightnessController LightBulbBrightnessController { get; }
 
         public HomeStateContainer HomeStateContainer { get; }
 
