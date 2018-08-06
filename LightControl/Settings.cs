@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 
 namespace LightControl
@@ -21,6 +22,10 @@ namespace LightControl
         public double Longitude => double.Parse(_configuration.GetSection("General")["Longitude"]);
 
         public int ServerPort => int.Parse(_configuration.GetSection("General")["ServerPort"]);
+        public string ZWavePort => _configuration.GetSection("General")["ZWavePort"];
+
+        public Guid SunroomComputerId => Guid.Parse(_configuration.GetSection("Sunroom")["ComputerId"]);
+        public Guid SunroomLightId => Guid.Parse(_configuration.GetSection("Sunroom")["LightId"]);
 
         /// <summary>
         /// Sunroom's luminance level to be considered dark.
@@ -38,8 +43,13 @@ namespace LightControl
         public int SunroomMotionDimmedSeconds => int.Parse(_configuration.GetSection("Sunroom")["MotionDimmedSeconds"]);
 
         /// <summary>
-        /// The brightness to dim the sunroom with after detecting motion when it's dark and the computer is off.
+        /// Brightness to dim the sunroom with after detecting motion when it's dark and the computer is off.
         /// </summary>
         public int SunroomMotionDimmedBrightness => int.Parse(_configuration.GetSection("Sunroom")["MotionDimmedBrightness"]);
+
+        /// <summary>
+        /// Node id for the sunroom's luminance/motion/temperature/humidity sensor.
+        /// </summary>
+        public int SunroomZWaveZoozNodeId => int.Parse(_configuration.GetSection("Sunroom")["ZWaveZoozNodeId"]);
     }
 }

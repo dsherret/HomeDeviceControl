@@ -8,4 +8,8 @@
     <PackageReference Include="ZWave4Net" Version="1.0.0.160" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LightControl.Core\LightControl.Core.csproj" />
+  </ItemGroup>
+
 </Project>

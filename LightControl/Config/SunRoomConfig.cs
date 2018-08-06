@@ -4,7 +4,6 @@ using LightControl.Core.Utils;
 using LightControl.LightBulbs;
 using LightControl.Plugin.ZoozSensor;
 using System;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace LightControl.Config
@@ -19,8 +18,8 @@ namespace LightControl.Config
 
         private static void SetupStateChangers(HomeContext homeContext)
         {
-            var motionSensor = new ZoozMotionSensor(DeviceIdentifiers.SunRoomZoozSensorNodeId);
-            var lightSensor = new ZoozLightSensor(DeviceIdentifiers.SunRoomZoozSensorNodeId);
+            var motionSensor = new ZoozMotionSensor(Settings.Default.ZWavePort, Settings.Default.SunroomZWaveZoozNodeId);
+            var lightSensor = new ZoozLightSensor(Settings.Default.ZWavePort, Settings.Default.SunroomZWaveZoozNodeId);
             var homeStateContainer = homeContext.HomeStateContainer;
 
             lightSensor.LuminanceChanged += (sender, e) => homeStateContainer.UpdateState(state => state.SunRoom.Luminance = (int)e.Value);
@@ -33,7 +32,7 @@ namespace LightControl.Config
 
             homeContext.DevicePowerStatusReceiver.PowerStatusChanged += (sender, e) =>
             {
-                if (e.DevicePowerStatus.DeviceId == DeviceIdentifiers.ComputerId)
+                if (e.DevicePowerStatus.DeviceId == Settings.Default.SunroomComputerId)
                 {
                     Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom computer power status changed ({e.DevicePowerStatus.IsPoweredOn})");
                     homeStateContainer.UpdateState(state => state.SunRoom.IsComputerOn = e.DevicePowerStatus.IsPoweredOn);
@@ -43,7 +42,7 @@ namespace LightControl.Config
 
         private static void Config(HomeContext homeContext)
         {
-            var sunRoomBulb = homeContext.LightBulbFactory.Get(DeviceIdentifiers.SunroomLightId);
+            var sunRoomBulb = homeContext.LightBulbFactory.Get(Settings.Default.SunroomLightId);
             var dimmedActioner = GetDimmedActioner(sunRoomBulb, homeContext);
 
             homeContext.HomeStateContainer.OnStateUpdated(async (e) =>
