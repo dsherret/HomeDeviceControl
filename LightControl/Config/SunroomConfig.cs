@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LightControl.Config
 {
-    public static class SunRoomConfig
+    public static class SunroomConfig
     {
         public static void Setup(HomeContext homeContext)
         {
@@ -22,20 +22,20 @@ namespace LightControl.Config
             var lightSensor = new ZoozLightSensor(Settings.Default.ZWavePort, Settings.Default.SunroomZWaveZoozNodeId);
             var homeStateContainer = homeContext.HomeStateContainer;
 
-            lightSensor.LuminanceChanged += (sender, e) => homeStateContainer.UpdateState(state => state.SunRoom.Luminance = (int)e.Value);
+            lightSensor.LuminanceChanged += (sender, e) => homeStateContainer.UpdateState(state => state.Sunroom.Luminance = (int)e.Value);
 
             motionSensor.MotionDetected += (sender, e) =>
             {
-                Logger.Log(typeof(SunRoomConfig), LogLevel.Info, "Sunroom motion detected.");
-                homeStateContainer.UpdateState(state => state.SunRoom.LastMotionDetected = DateTime.Now);
+                Logger.Log(typeof(SunroomConfig), LogLevel.Info, "Sunroom motion detected.");
+                homeStateContainer.UpdateState(state => state.Sunroom.LastMotionDetected = DateTime.Now);
             };
 
             homeContext.DevicePowerStatusReceiver.PowerStatusChanged += (sender, e) =>
             {
                 if (e.DevicePowerStatus.DeviceId == Settings.Default.SunroomComputerId)
                 {
-                    Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom computer power status changed ({e.DevicePowerStatus.IsPoweredOn})");
-                    homeStateContainer.UpdateState(state => state.SunRoom.IsComputerOn = e.DevicePowerStatus.IsPoweredOn);
+                    Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer power status changed ({e.DevicePowerStatus.IsPoweredOn})");
+                    homeStateContainer.UpdateState(state => state.Sunroom.IsComputerOn = e.DevicePowerStatus.IsPoweredOn);
                 }
             };
         }
@@ -47,8 +47,8 @@ namespace LightControl.Config
 
             homeContext.HomeStateContainer.OnStateUpdated(async (e) =>
             {
-                var oldState = e.OldState.SunRoom;
-                var newState = e.NewState.SunRoom;
+                var oldState = e.OldState.Sunroom;
+                var newState = e.NewState.Sunroom;
 
                 // sync light power state with computer state
                 if (oldState.IsComputerOn != newState.IsComputerOn)
@@ -57,7 +57,7 @@ namespace LightControl.Config
                     {
                         if (newState.IsDark)
                         {
-                            Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom computer turned on. Ensuring light is on since it's dark.");
+                            Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned on. Ensuring light is on since it's dark.");
                             await sunRoomBulb.SetPowerAsync(true);
                         }
                         homeContext.LightBulbColorController.HandleLightBulb(sunRoomBulb);
@@ -66,12 +66,12 @@ namespace LightControl.Config
                     {
                         if (newState.IsDark)
                         {
-                            Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom computer turned off. Dimming light while motion is detected.");
+                            Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned off. Dimming light while motion is detected.");
                             await dimmedActioner.DoActions();
                         }
                         else
                         {
-                            Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom computer turned off. Turning off light if it's on.");
+                            Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned off. Turning off light if it's on.");
                             await sunRoomBulb.SetPowerAsync(false);
                         }
                     }
@@ -80,7 +80,7 @@ namespace LightControl.Config
                 // turn on the light if the computer is on and it's become dark
                 if (!oldState.IsDark && newState.IsDark && newState.IsComputerOn)
                 {
-                    Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom is dark and computer is on. Ensure light is turned on.");
+                    Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom is dark and computer is on. Ensure light is turned on.");
                     await sunRoomBulb.SetPowerAsync(true);
                 }
 
@@ -90,7 +90,7 @@ namespace LightControl.Config
                     if (!(await sunRoomBulb.GetPowerAsync()))
                     {
 
-                        Logger.Log(typeof(SunRoomConfig), LogLevel.Info,
+                        Logger.Log(typeof(SunroomConfig), LogLevel.Info,
                             $"Sunroom is dark, computer is off, and motion was detected. Ensure light is dimly turned on.");
                         await dimmedActioner.DoActions();
                     }
@@ -116,12 +116,12 @@ namespace LightControl.Config
                     // only turn off if its in the state it was set to originally
                     if (powerStatus && brightness == Settings.Default.SunroomMotionDimmedBrightness)
                     {
-                        Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Turning off sunroom's dimly lit bulb since no motion has been detected.");
+                        Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Turning off sunroom's dimly lit bulb since no motion has been detected.");
                         await sunRoomBulb.SetPowerAsync(false);
                     }
                     else
                     {
-                        Logger.Log(typeof(SunRoomConfig), LogLevel.Info, $"Sunroom bulb has changed state since being dimly lit so state will be left alone.");
+                        Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom bulb has changed state since being dimly lit so state will be left alone.");
                     }
 
                     homeContext.LightBulbColorController.HandleLightBulb(sunRoomBulb);

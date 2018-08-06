@@ -9,8 +9,8 @@ namespace LightControl
         public double SunAltitude { get; set; }
         public DateTime CurrentTime { get; set; }
 
-        private SunRoom _sunRoom;
-        public SunRoom SunRoom
+        private Sunroom _sunRoom;
+        public Sunroom Sunroom
         {
             get => _sunRoom;
             set
@@ -26,7 +26,7 @@ namespace LightControl
             {
                 SunAltitude = SunAltitude,
                 CurrentTime = CurrentTime,
-                SunRoom = SunRoom.Clone()
+                Sunroom = Sunroom.Clone()
             };
         }
 
@@ -34,11 +34,11 @@ namespace LightControl
         {
             return SunAltitude == other.SunAltitude
                 && CurrentTime == other.CurrentTime
-                && SunRoom.Equals(other.SunRoom);
+                && Sunroom.Equals(other.Sunroom);
         }
     }
 
-    public class SunRoom : IEquatable<SunRoom>
+    public class Sunroom : IEquatable<Sunroom>
     {
         private HomeState _homeState;
 
@@ -49,9 +49,9 @@ namespace LightControl
         public bool IsDark => Luminance < Settings.Default.SunroomMotionDarkLuminance
             || _homeState.SunAltitude < Settings.Default.SunroomMotionDarkSunAltitude;
 
-        public SunRoom Clone()
+        public Sunroom Clone()
         {
-            return new SunRoom
+            return new Sunroom
             {
                 IsComputerOn = IsComputerOn,
                 Luminance = Luminance,
@@ -59,7 +59,7 @@ namespace LightControl
             };
         }
 
-        public bool Equals(SunRoom other)
+        public bool Equals(Sunroom other)
         {
             return IsComputerOn == other.IsComputerOn
                 && Luminance == other.Luminance
@@ -92,7 +92,7 @@ namespace LightControl
         private HomeState _state = new HomeState
         {
             SunAltitude = 100,
-            SunRoom = new SunRoom
+            Sunroom = new Sunroom
             {
                 IsComputerOn = false,
                 LastMotionDetected = DateTime.Now.AddDays(-1),

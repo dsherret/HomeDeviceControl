@@ -17,7 +17,7 @@ namespace LightControl
             var homeContext = new HomeContext();
             var server = await RunServerAsync(homeContext);
 
-            SunRoomConfig.Setup(homeContext);
+            SunroomConfig.Setup(homeContext);
 
             // hook up stuff that could change
             var sunCalculator = new SunCalculator(() => new GeoLocation
