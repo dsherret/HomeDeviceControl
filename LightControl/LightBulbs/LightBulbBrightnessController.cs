@@ -68,7 +68,7 @@ namespace LightControl.LightBulbs
         {
             if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(0, 30, 0))
                 return 50;
-            if (state.CurrentTime.TimeOfDay >= new TimeSpan(0, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(0, 30, 0) && state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
                 return 10;
             return 100;
         }
