@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceControl", "DeviceControl\DeviceControl.csproj", "{7E890249-657E-4FB0-90C3-D1421758677C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceControl.Plugin.Yeelight", "DeviceControl.Plugin.Yeelight\DeviceControl.Plugin.Yeelight.csproj", "{45204828-48D5-42D8-AEC9-C4703DBD742B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceControl.Core", "DeviceControl.Core\DeviceControl.Core.csproj", "{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceControl.Test", "DeviceControl.Test\DeviceControl.Test.csproj", "{47B65979-2DB4-4891-A186-39F08F6DE4FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceControl.Plugin.ZoozSensor", "DeviceControl.Plugin.ZoozSensor\DeviceControl.Plugin.ZoozSensor.csproj", "{D8AECF27-4B48-4097-A189-2FF834CC04DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceControl.ZWave", "DeviceControl.ZWave\DeviceControl.ZWave.csproj", "{5FB43788-E11C-41A3-904C-AF0BD6FAF825}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceControl.Communication.Server", "DeviceControl.Communication.Server\DeviceControl.Communication.Server.csproj", "{0272A154-D642-4FC2-BE51-449B3A8F3774}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceControl.Communication.Common", "DeviceControl.Communication.Common\DeviceControl.Communication.Common.csproj", "{B933F45A-6111-40DA-80C7-636A62504D77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceControl.Communication.PowerStatus.Client", "DeviceControl.Communication.PowerStatus.Client\DeviceControl.Communication.PowerStatus.Client.csproj", "{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceControl.Communication.ClientApi", "DeviceControl.Communication.ClientApi\DeviceControl.Communication.ClientApi.csproj", "{65C410E2-4D17-4D3D-AB0F-3C66EA45FFF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E890249-657E-4FB0-90C3-D1421758677C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E890249-657E-4FB0-90C3-D1421758677C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E890249-657E-4FB0-90C3-D1421758677C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E890249-657E-4FB0-90C3-D1421758677C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45204828-48D5-42D8-AEC9-C4703DBD742B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45204828-48D5-42D8-AEC9-C4703DBD742B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45204828-48D5-42D8-AEC9-C4703DBD742B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45204828-48D5-42D8-AEC9-C4703DBD742B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05938D12-FBA0-4BCB-9317-AAEE3A1A0753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B65979-2DB4-4891-A186-39F08F6DE4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8AECF27-4B48-4097-A189-2FF834CC04DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8AECF27-4B48-4097-A189-2FF834CC04DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8AECF27-4B48-4097-A189-2FF834CC04DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8AECF27-4B48-4097-A189-2FF834CC04DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB43788-E11C-41A3-904C-AF0BD6FAF825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB43788-E11C-41A3-904C-AF0BD6FAF825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB43788-E11C-41A3-904C-AF0BD6FAF825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB43788-E11C-41A3-904C-AF0BD6FAF825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0272A154-D642-4FC2-BE51-449B3A8F3774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0272A154-D642-4FC2-BE51-449B3A8F3774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0272A154-D642-4FC2-BE51-449B3A8F3774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0272A154-D642-4FC2-BE51-449B3A8F3774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B933F45A-6111-40DA-80C7-636A62504D77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B933F45A-6111-40DA-80C7-636A62504D77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B933F45A-6111-40DA-80C7-636A62504D77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B933F45A-6111-40DA-80C7-636A62504D77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65C410E2-4D17-4D3D-AB0F-3C66EA45FFF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65C410E2-4D17-4D3D-AB0F-3C66EA45FFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65C410E2-4D17-4D3D-AB0F-3C66EA45FFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65C410E2-4D17-4D3D-AB0F-3C66EA45FFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F596640C-4504-4A92-AD90-45B5F93CF557}
+	EndGlobalSection
+EndGlobal
