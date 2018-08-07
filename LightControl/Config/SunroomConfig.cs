@@ -22,7 +22,11 @@ namespace LightControl.Config
             var lightSensor = new ZoozLightSensor(Settings.Default.ZWavePort, Settings.Default.SunroomZWaveZoozNodeId);
             var homeStateContainer = homeContext.HomeStateContainer;
 
-            lightSensor.LuminanceChanged += (sender, e) => homeStateContainer.UpdateState(state => state.Sunroom.Luminance = (int)e.Value);
+            lightSensor.LuminanceChanged += (sender, e) =>
+            {
+                Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom luminance changed: {e.Value}");
+                homeStateContainer.UpdateState(state => state.Sunroom.Luminance = (int)e.Value);
+            };
 
             motionSensor.MotionDetected += (sender, e) =>
             {
