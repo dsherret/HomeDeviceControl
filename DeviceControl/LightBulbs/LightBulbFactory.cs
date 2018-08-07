@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DeviceControl.LightBulbs
 {
-    public class LightBulbFactory
+    public sealed class LightBulbFactory : IDisposable
     {
         private readonly object _lock = new object();
         private readonly Dictionary<ILightBulb, LightBulbWrapper> _lightBulbs = new Dictionary<ILightBulb, LightBulbWrapper>();
@@ -15,18 +15,13 @@ namespace DeviceControl.LightBulbs
 
         public LightBulbFactory(LightBulbStore store)
         {
-            store.Added += (sender, e) =>
-            {
-                // add it to the internal cache
-                var wrapper = GetWrapper(e.Value);
-
-                // fire event
-                EventHandler<LightBulbWrapperEventArgs> handler;
-                lock (_lock)
-                    handler = (EventHandler<LightBulbWrapperEventArgs>)_eventHandlerList[nameof(Added)];
-                handler?.Invoke(this, new LightBulbWrapperEventArgs(wrapper));
-            };
             _store = store;
+            store.Added += Store_Added;
+        }
+
+        public void Dispose()
+        {
+            _store.Added -= Store_Added;
         }
 
         public event EventHandler<LightBulbWrapperEventArgs> Added
@@ -54,6 +49,18 @@ namespace DeviceControl.LightBulbs
         public LightBulbWrapper Get(Guid id)
         {
             return GetWrapper(_store.Get(id));
+        }
+
+        private void Store_Added(object sender, LightBulbEventArgs e)
+        {
+            // add it to the internal cache
+            var wrapper = GetWrapper(e.Value);
+
+            // fire event
+            EventHandler<LightBulbWrapperEventArgs> handler;
+            lock (_lock)
+                handler = (EventHandler<LightBulbWrapperEventArgs>)_eventHandlerList[nameof(Added)];
+            handler?.Invoke(this, new LightBulbWrapperEventArgs(wrapper));
         }
 
         private LightBulbWrapper GetWrapper(ILightBulb bulb)
