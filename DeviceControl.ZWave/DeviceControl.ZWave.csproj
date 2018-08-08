@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SerialPortStream" Version="2.1.4" />
     <PackageReference Include="ZWave4Net" Version="1.0.0.160" />
   </ItemGroup>
 

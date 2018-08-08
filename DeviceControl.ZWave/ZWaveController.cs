@@ -2,7 +2,6 @@
 using DeviceControl.Core.Utils;
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using ZWaveLibrary = ZWave;
 
@@ -14,6 +13,7 @@ namespace DeviceControl.ZWave
         private readonly string _port;
         private readonly EventHandlerList _events = new EventHandlerList();
         private ZWaveLibrary.ZWaveController _controller;
+        private ZWaveLibrary.Channel.ISerialPort _serialPort;
 
         public ZWaveController(string port)
         {
@@ -45,6 +45,7 @@ namespace DeviceControl.ZWave
         public void Dispose()
         {
             GetController()?.Close();
+            (_serialPort as IDisposable)?.Dispose();
         }
 
         public async Task<ZWaveLibrary.Node> GetNodeAsync(int id)
@@ -120,7 +121,7 @@ namespace DeviceControl.ZWave
         {
             try
             {
-                var controller = new ZWaveLibrary.ZWaveController(_port);
+                var controller = new ZWaveLibrary.ZWaveController(GetSerialPort());
                 controller.Open();
                 return controller;
             }
@@ -129,6 +130,13 @@ namespace DeviceControl.ZWave
                 Logger.Log(this, LogLevel.Error, "Problem creating zwave controller.", ex);
                 return null;
             }
+        }
+
+        private ZWaveLibrary.Channel.ISerialPort GetSerialPort()
+        {
+            lock (_lock)
+                _serialPort = _serialPort ?? new SerialPort(_port);
+            return _serialPort;
         }
 
         private ZWaveLibrary.ZWaveController GetController()
