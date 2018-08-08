@@ -52,7 +52,7 @@ namespace DeviceControl
 
         private static async Task<Server> RunServerAsync(HomeContext homeContext)
         {
-            var server = new Server(Settings.Default.ServerPort);
+            var server = new Server(Settings.Default.ServerHostname, Settings.Default.ServerPort);
             server.AddValueListener(homeContext.DevicePowerStatusReceiver);
             await server.RunAsync();
             return server;

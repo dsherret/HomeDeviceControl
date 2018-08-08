@@ -21,6 +21,7 @@ namespace DeviceControl
         public double Latitude => double.Parse(_configuration.GetSection("General")["Latitude"]);
         public double Longitude => double.Parse(_configuration.GetSection("General")["Longitude"]);
 
+        public string ServerHostname => _configuration.GetSection("General")["ServerHostname"];
         public int ServerPort => int.Parse(_configuration.GetSection("General")["ServerPort"]);
         public string ZWavePort => _configuration.GetSection("General")["ZWavePort"];
 

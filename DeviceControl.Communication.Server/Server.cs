@@ -22,9 +22,9 @@ namespace DeviceControl.Communication.Server
             public override string Name => nameof(RuntimeHandlerWebModule);
         }
 
-        public Server(int port)
+        public Server(string hostname, int port)
         {
-            _server = new WebServer($"http://localhost:{port}/");
+            _server = new WebServer($"http://{hostname}:{port}/");
         }
 
         public void Dispose()
