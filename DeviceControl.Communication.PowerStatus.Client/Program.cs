@@ -28,7 +28,7 @@ namespace DeviceControl.Communication.PowerStatus.Client
                 return 1;
             }
 
-            using (var client = new ClientApi.Client("http://localhost:8084"))
+            using (var client = new ClientApi.Client("http://192.168.1.125:8084"))
                 await client.UpdateDevicePowerStatus(deviceId, isPoweredOn);
 
             return 0;

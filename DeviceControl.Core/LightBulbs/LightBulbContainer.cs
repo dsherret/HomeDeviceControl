@@ -142,20 +142,18 @@ namespace DeviceControl.Core.LightBulbs
             if (!IsConnected)
                 return;
 
-            var tasks = new List<Task>();
-
-            if (_pendingState.Contains(nameof(_state.IsPoweredOn)))
-                tasks.Add(_lightBulb.SetPowerAsync(_state.IsPoweredOn));
-            if (_pendingState.Contains(nameof(_state.Color)))
-                tasks.Add(_lightBulb.SetColorAsync(_state.Color));
-            if (_pendingState.Contains(nameof(_state.Brightness)))
-                tasks.Add(_lightBulb.SetBrightnessAsync(_state.Brightness));
-            if (_pendingState.Contains(nameof(_state.Temperature)))
-                tasks.Add(_lightBulb.SetTemperatureAsync(_state.Temperature));
-
             try
             {
-                await Task.WhenAll(tasks);
+                // can't do this in parallel because the Yeelight API has some parallelization bugs
+                if (_pendingState.Contains(nameof(_state.IsPoweredOn)))
+                    await _lightBulb.SetPowerAsync(_state.IsPoweredOn);
+                if (_pendingState.Contains(nameof(_state.Color)))
+                    await _lightBulb.SetColorAsync(_state.Color);
+                if (_pendingState.Contains(nameof(_state.Brightness)))
+                    await _lightBulb.SetBrightnessAsync(_state.Brightness);
+                if (_pendingState.Contains(nameof(_state.Temperature)))
+                    await _lightBulb.SetTemperatureAsync(_state.Temperature);
+
                 _pendingState.Clear();
             }
             catch (Exception ex)
