@@ -3,7 +3,6 @@ using DeviceControl.Core.LightBulbs;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using YeelightAPI;
 
@@ -11,6 +10,12 @@ namespace DeviceControl.Plugin.Yeelight
 {
     public sealed class YeelightBulb : ILightBulb
     {
+        private static class ColorMode
+        {
+            public const int Color = 1;
+            public const int Temperature = 2;
+        }
+
         private readonly Device _device;
 
         internal YeelightBulb(Guid id, Device device)
@@ -49,33 +54,25 @@ namespace DeviceControl.Plugin.Yeelight
 
         public async Task<bool> GetPowerAsync()
         {
-            // temp workaround for yeelight bugs.. need to try a few times to get a property
-            string result = null;
-            for (var i = 0; i < 3; i++)
-            {
-                result = await _device.GetProp(YeelightAPI.Models.PROPERTIES.power) as string;
-                if (result == "on" || result == "off")
-                    break;
-                await Task.Delay(250);
-            }
+            var result = await GetPropertyAsync(YeelightAPI.Models.PROPERTIES.power);
             return result == "on";
         }
 
-        public async Task<int> GetBrightnessAsync()
+        public Task<int> GetBrightnessAsync()
         {
-            return await TryGetInt(() => _device.GetProp(YeelightAPI.Models.PROPERTIES.bright)) ?? 100;
+            return GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES.bright);
         }
 
         public async Task<Color> GetColorAsync()
         {
-            var rgb = await TryGetInt(() => _device.GetProp(YeelightAPI.Models.PROPERTIES.rgb)) ?? 0;
+            var rgb = await GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES.rgb);
             // use the implicit 255 to ignore the alpha values in the rest of the application (Color.FromArgb(r, g, b) will use 255 alpha)
             return Color.FromArgb(255, Color.FromArgb(rgb));
         }
 
-        public async Task<int> GetTemperatureAsync()
+        public Task<int> GetTemperatureAsync()
         {
-            return await TryGetInt(() => _device.GetProp(YeelightAPI.Models.PROPERTIES.ct)) ?? 4000;
+            return GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES.ct);
         }
 
         public Task SetPowerAsync(bool power)
@@ -96,7 +93,7 @@ namespace DeviceControl.Plugin.Yeelight
 
         public async Task SetColorAsync(Color color)
         {
-            if (await GetColorAsync() == color)
+            if (await GetColorAsync() == color && await GetColorModeAsync() == ColorMode.Color)
                 return;
 
             await _device.SetRGBColor(color.R, color.G, color.B, 1000);
@@ -108,10 +105,15 @@ namespace DeviceControl.Plugin.Yeelight
             if (temperature < 1000)
                 throw new ArgumentException("Temperature cannot be less than 1000.", nameof(temperature));
 
-            if (await GetTemperatureAsync() == temperature)
+            if (await GetTemperatureAsync() == temperature && await GetColorModeAsync() == ColorMode.Temperature)
                 return;
 
             await _device.SetColorTemperature(temperature, 1000);
+        }
+
+        private Task<int> GetColorModeAsync()
+        {
+            return GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES.color_mode);
         }
 
         private void Device_OnNotificationReceived(object sender, NotificationReceivedEventArgs e)
@@ -128,19 +130,26 @@ namespace DeviceControl.Plugin.Yeelight
                 ColorChanged?.Invoke(this, new LightBulbPropertyChangedEventArgs<Color>(Color.FromArgb((int)color)));
         }
 
-        private async Task<int?> TryGetInt(Func<Task<object>> getValue)
+        private async Task<int> GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES property)
         {
-            // temp solution because of a bug in yeelight (it will give the wrong prop back)
-            for (var i = 0; i < 3; i++)
-            {
-                var bright = (string) await getValue();
-                if (int.TryParse(bright, out int result))
-                    return result;
-                await Task.Delay(250);
-            }
+            return int.Parse(await GetPropertyAsync(property));
+        }
 
-            // give up...
-            return null;
+        private async Task<string> GetPropertyAsync(YeelightAPI.Models.PROPERTIES property)
+        {
+            // temporarily need to get all the properties because of a bug getting single properties
+            // (it sometimes won't return the correct property requested)
+            Dictionary<YeelightAPI.Models.PROPERTIES, object> properties = null;
+            for (var i = 0; i < 10; i++)
+            {
+                properties = await _device.GetAllProps();
+                if (properties != null)
+                    break;
+                await Task.Delay(100 * (i + 1));
+            }
+            if (properties == null)
+                throw new TimeoutException("Could not get the yeelight properties within the timeout.");
+            return properties[property] as string;
         }
 
         private bool GetParamValue<T>(Dictionary<YeelightAPI.Models.PROPERTIES, object> parameters, YeelightAPI.Models.PROPERTIES prop, out T value)
