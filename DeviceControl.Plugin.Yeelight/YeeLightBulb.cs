@@ -166,7 +166,7 @@ namespace DeviceControl.Plugin.Yeelight
 
         private void Device_OnError(object sender, UnhandledExceptionEventArgs e)
         {
-            Logger.Log(this, LogLevel.Error, "Device error.", e.ExceptionObject as Exception);
+            Logger.Log(this, LogLevel.Error, "YeeLight bulb error.", e.ExceptionObject as Exception);
         }
     }
 }

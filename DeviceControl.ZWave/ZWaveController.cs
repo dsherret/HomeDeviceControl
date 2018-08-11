@@ -2,6 +2,7 @@
 using DeviceControl.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using ZWaveLibrary = ZWave;
 
@@ -91,6 +92,7 @@ namespace DeviceControl.ZWave
                 _controller = controller;
 
             FireConnectedEvent();
+            LogNodes(controller);
 
             async void AttemptReconnection()
             {
@@ -130,6 +132,12 @@ namespace DeviceControl.ZWave
                 Logger.Log(this, LogLevel.Error, "Problem creating zwave controller.", ex);
                 return null;
             }
+        }
+
+        private async void LogNodes(ZWaveLibrary.ZWaveController controller)
+        {
+            var nodeIds = (await controller.GetNodes()).Select(n => n.NodeID);
+            Logger.Log(this, LogLevel.Info, "ZWave node ids: " + string.Join(", ", nodeIds));
         }
 
         private ZWaveLibrary.Channel.ISerialPort GetSerialPort()

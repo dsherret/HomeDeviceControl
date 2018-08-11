@@ -26,7 +26,7 @@ namespace DeviceControl
                 Longitude = Settings.Default.Longitude
             });
             var timer = new System.Timers.Timer();
-            timer.Interval = 30_000;
+            timer.Interval = 30_000; // todo: move to settings file
             timer.Elapsed += (sender, e) =>
             {
                 UpdateState();
@@ -35,8 +35,6 @@ namespace DeviceControl
             UpdateState();
 
             new ManualResetEvent(false).WaitOne();
-            Console.WriteLine("FINI");
-            Console.ReadKey();
 
             server.Dispose();
 
