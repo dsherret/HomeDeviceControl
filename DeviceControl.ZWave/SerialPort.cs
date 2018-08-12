@@ -104,7 +104,6 @@ namespace DeviceControl.ZWave
             public override void EndWrite(IAsyncResult asyncResult) => throw new NotSupportedException();
             public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state) => throw new NotSupportedException();
             public override int EndRead(IAsyncResult asyncResult) => throw new NotSupportedException();
-            public override void CopyTo(Stream destination, int bufferSize) => throw new NotSupportedException();
             public override void WriteByte(byte value) => throw new NotSupportedException();
             public override int ReadByte() => throw new NotSupportedException();
             public override Task FlushAsync(CancellationToken cancellationToken) => throw new NotSupportedException();

@@ -17,7 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DeviceControl.Communication.Common\DeviceControl.Communication.Common.csproj" />
     <ProjectReference Include="..\DeviceControl.Communication.Server\DeviceControl.Communication.Server.csproj" />
-    <ProjectReference Include="..\DeviceControl.Core\DeviceControl.Core.csproj" />
     <ProjectReference Include="..\DeviceControl.Plugin.Yeelight\DeviceControl.Plugin.Yeelight.csproj" />
     <ProjectReference Include="..\DeviceControl.Plugin.ZoozSensor\DeviceControl.Plugin.ZoozSensor.csproj" />
   </ItemGroup>

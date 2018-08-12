@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unosquare.Labs.EmbedIO;
 using Unosquare.Labs.EmbedIO.Constants;
-using Unosquare.Labs.EmbedIO.Modules;
 
 namespace DeviceControl.Communication.Server
 {

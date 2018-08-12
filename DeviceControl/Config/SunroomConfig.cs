@@ -75,8 +75,11 @@ namespace DeviceControl.Config
                         }
                         else
                         {
-                            Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned off. Turning off light if it's on.");
-                            await sunRoomBulb.SetPowerAsync(false);
+                            if (await sunRoomBulb.GetPowerAsync())
+                            {
+                                Logger.Log(typeof(SunroomConfig), LogLevel.Info, $"Sunroom computer turned off. Turning off light.");
+                                await sunRoomBulb.SetPowerAsync(false);
+                            }
                         }
                     }
                 }

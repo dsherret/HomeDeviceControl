@@ -37,7 +37,7 @@ namespace DeviceControl.Core.Utils
             var timeRange = maxTime - minTime;
             var timeProgress = currentTime - minTime;
 
-            return timeProgress / timeRange;
+            return timeProgress.Ticks / timeRange.Ticks;
         }
     }
 }

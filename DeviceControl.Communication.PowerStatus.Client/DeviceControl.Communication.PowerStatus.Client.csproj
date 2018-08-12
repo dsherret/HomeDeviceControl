@@ -9,8 +9,13 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DeviceControl.Communication.ClientApi\DeviceControl.Communication.ClientApi.csproj" />
+    <ProjectReference Include="..\DeviceControl.Communication.Common\DeviceControl.Communication.Common.csproj" />
   </ItemGroup>
 
 </Project>

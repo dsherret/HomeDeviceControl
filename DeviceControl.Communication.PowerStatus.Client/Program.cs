@@ -28,6 +28,7 @@ namespace DeviceControl.Communication.PowerStatus.Client
                 return 1;
             }
 
+            // todo: don't hardcode this url
             using (var client = new ClientApi.Client("http://192.168.1.125:8084"))
                 await client.UpdateDevicePowerStatus(deviceId, isPoweredOn);
 
