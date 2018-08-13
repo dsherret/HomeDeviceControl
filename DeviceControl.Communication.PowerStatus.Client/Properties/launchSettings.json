@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "DeviceControl.Communication.PowerStatus.Client": {
-      "commandName": "Project",
-      "commandLineArgs": "7D115C0C-6181-4965-BCEB-449781ECD27A true"
-    }
-  }
-}
