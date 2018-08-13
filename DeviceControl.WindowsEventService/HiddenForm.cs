@@ -25,11 +25,11 @@ namespace DeviceControl.WindowsEventService
 
             // from here: https://stackoverflow.com/a/9159974/188246
             // much more reliable than SystemEvents.PowerModeChanged
-            var q = new WqlEventQuery();
+            var query = new WqlEventQuery();
             var scope = new ManagementScope("root\\CIMV2");
 
-            q.EventClassName = "Win32_PowerManagementEvent";
-            managementEventWatcher = new ManagementEventWatcher(scope, q);
+            query.EventClassName = "Win32_PowerManagementEvent";
+            managementEventWatcher = new ManagementEventWatcher(scope, query);
             managementEventWatcher.EventArrived += PowerEventArrived;
             managementEventWatcher.Start();
 
@@ -44,14 +44,17 @@ namespace DeviceControl.WindowsEventService
 
         private async void PowerEventArrived(object sender, EventArrivedEventArgs e)
         {
+            const string SUSPEND_EVENT = "4";
+            const string RESUME_EVENT = "7";
+
             foreach (PropertyData pd in e.NewEvent.Properties)
             {
                 switch (pd?.Value?.ToString())
                 {
-                    case "4":
+                    case SUSPEND_EVENT:
                         await PowerStatus.SendAsync(false);
                         break;
-                    case "7":
+                    case RESUME_EVENT:
                         await PowerStatus.SendAsync(true);
                         break;
                 }
