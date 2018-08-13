@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeviceControl.Core;
+using System;
 using System.ServiceProcess;
 
 namespace DeviceControl.WindowsEventService
@@ -10,6 +11,8 @@ namespace DeviceControl.WindowsEventService
         /// </summary>
         static void Main()
         {
+            Logger.Configure("log4net.config");
+
             var eventService = new EventService();
 #if DEBUG
             eventService.TestStart(new string[0]);

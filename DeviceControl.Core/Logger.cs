@@ -16,8 +16,11 @@ namespace DeviceControl.Core
     {
         public static void Configure(string configLocation)
         {
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            XmlConfigurator.Configure(logRepository, new FileInfo(configLocation));
+            var entryAssembly = Assembly.GetExecutingAssembly();
+            var assemblyFolder = Path.GetDirectoryName(entryAssembly.Location);
+            var logRepository = LogManager.GetRepository(entryAssembly);
+
+            XmlConfigurator.Configure(logRepository, new FileInfo(Path.Combine(assemblyFolder, configLocation)));
         }
 
         public static void Log(object type, LogLevel level, Exception ex)

@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -59,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
@@ -66,6 +72,10 @@
     <ProjectReference Include="..\DeviceControl.Communication.ClientApi\DeviceControl.Communication.ClientApi.csproj">
       <Project>{06cf8969-88b7-46a7-a5ed-337bd3c19941}</Project>
       <Name>DeviceControl.Communication.ClientApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeviceControl.Core\DeviceControl.Core.csproj">
+      <Project>{49a2ccac-abc9-4133-b1f8-631c71e31e53}</Project>
+      <Name>DeviceControl.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
