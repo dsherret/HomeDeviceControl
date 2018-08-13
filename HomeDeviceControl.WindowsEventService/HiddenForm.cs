@@ -13,10 +13,12 @@ namespace HomeDeviceControl.WindowsEventService
     public partial class HiddenForm : Form
     {
         private ManagementEventWatcher managementEventWatcher;
+        private readonly Settings _settings;
 
-        public HiddenForm()
+        public HiddenForm(Settings settings)
         {
             InitializeComponent();
+            _settings = settings;
         }
 
         private void HiddenForm_Load(object sender, EventArgs e)
@@ -52,10 +54,10 @@ namespace HomeDeviceControl.WindowsEventService
                 switch (pd?.Value?.ToString())
                 {
                     case SUSPEND_EVENT:
-                        await PowerStatus.SendAsync(false);
+                        await PowerStatus.SendAsync(_settings, false);
                         break;
                     case RESUME_EVENT:
-                        await PowerStatus.SendAsync(true);
+                        await PowerStatus.SendAsync(_settings, true);
                         break;
                 }
             }

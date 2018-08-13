@@ -8,6 +8,8 @@ namespace HomeDeviceControl.WindowsEventService
 {
     public partial class EventService : ServiceBase
     {
+        private Settings _settings;
+
         public EventService()
         {
             InitializeComponent();
@@ -25,8 +27,9 @@ namespace HomeDeviceControl.WindowsEventService
 
         protected async override void OnStart(string[] args)
         {
+            _settings = new ArgumentsParser().ParseArguments(args);
             Logger.Log(this, LogLevel.Info, "Service starting...");
-            await PowerStatus.SendAsync(true);
+            await PowerStatus.SendAsync(_settings, true);
             new Thread(RunMessagePump).Start();
             Logger.Log(this, LogLevel.Info, "Service started.");
         }
@@ -39,7 +42,7 @@ namespace HomeDeviceControl.WindowsEventService
 
         private void RunMessagePump()
         {
-            Application.Run(new HiddenForm());
+            Application.Run(new HiddenForm(_settings));
         }
     }
 }

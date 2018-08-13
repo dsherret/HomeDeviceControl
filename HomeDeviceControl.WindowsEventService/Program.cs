@@ -9,13 +9,13 @@ namespace HomeDeviceControl.WindowsEventService
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args = null)
         {
             Logger.Configure("log4net.config");
 
             var eventService = new EventService();
 #if DEBUG
-            eventService.TestStart(new string[0]);
+            eventService.TestStart(args ?? new string[0]);
             Console.ReadLine();
             eventService.TestStop();
 #else
