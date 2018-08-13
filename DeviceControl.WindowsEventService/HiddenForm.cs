@@ -1,9 +1,8 @@
 ﻿using DeviceControl.Core;
-using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
+using System.Management;
 using System.Windows.Forms;
 
 namespace DeviceControl.WindowsEventService
@@ -13,6 +12,8 @@ namespace DeviceControl.WindowsEventService
 
     public partial class HiddenForm : Form
     {
+        private ManagementEventWatcher managementEventWatcher;
+
         public HiddenForm()
         {
             InitializeComponent();
@@ -20,38 +21,38 @@ namespace DeviceControl.WindowsEventService
 
         private void HiddenForm_Load(object sender, EventArgs e)
         {
-            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+            Logger.Log(this, LogLevel.Info, "Subscribed to power mode changed event.");
+
+            // from here: https://stackoverflow.com/a/9159974/188246
+            // much more reliable than SystemEvents.PowerModeChanged
+            var q = new WqlEventQuery();
+            var scope = new ManagementScope("root\\CIMV2");
+
+            q.EventClassName = "Win32_PowerManagementEvent";
+            managementEventWatcher = new ManagementEventWatcher(scope, q);
+            managementEventWatcher.EventArrived += PowerEventArrived;
+            managementEventWatcher.Start();
+
             Logger.Log(this, LogLevel.Info, "Subscribed to power mode changed event.");
         }
 
         private void HiddenForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged;
+            managementEventWatcher?.Stop();
             Logger.Log(this, LogLevel.Info, "Unsubscribed from power mode changed event.");
         }
 
-        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        private async void PowerEventArrived(object sender, EventArrivedEventArgs e)
         {
-            try
+            foreach (PropertyData pd in e.NewEvent.Properties)
             {
-                // wait on the task to ensure the computer doesn't go into sleep mode before it's done
-                SendStatusAsync().Wait();
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(this, LogLevel.Error, ex);
-                throw ex;
-            }
-
-            async Task SendStatusAsync()
-            {
-                switch (e.Mode)
+                switch (pd?.Value?.ToString())
                 {
-                    case PowerModes.Resume:
-                        await PowerStatus.SendAsync(true);
-                        break;
-                    case PowerModes.Suspend:
+                    case "4":
                         await PowerStatus.SendAsync(false);
+                        break;
+                    case "7":
+                        await PowerStatus.SendAsync(true);
                         break;
                 }
             }

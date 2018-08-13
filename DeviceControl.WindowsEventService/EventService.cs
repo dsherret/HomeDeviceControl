@@ -30,15 +30,15 @@ namespace DeviceControl.WindowsEventService
             Logger.Log(this, LogLevel.Info, "Service started.");
         }
 
-        private void RunMessagePump()
-        {
-            Application.Run(new HiddenForm());
-        }
-
         protected override void OnStop()
         {
             Logger.Log(this, LogLevel.Info, "Service stopped.");
             Application.Exit();
+        }
+
+        private void RunMessagePump()
+        {
+            Application.Run(new HiddenForm());
         }
     }
 }
