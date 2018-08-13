@@ -13,7 +13,18 @@ namespace DeviceControl.WindowsEventService
 
         protected override void OnStart(string[] args)
         {
+            SendPowerStatus(true);
             SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+        }
+
+        internal void TestStart(string[] args)
+        {
+            OnStart(args);
+        }
+
+        internal void TestStop()
+        {
+            OnStop();
         }
 
         protected override void OnStop()
@@ -26,10 +37,10 @@ namespace DeviceControl.WindowsEventService
             switch (e.Mode)
             {
                 case PowerModes.Resume:
-                    SendPowerStatus(false);
+                    SendPowerStatus(true);
                     break;
                 case PowerModes.Suspend:
-                    SendPowerStatus(true);
+                    SendPowerStatus(false);
                     break;
             }
         }
@@ -38,7 +49,7 @@ namespace DeviceControl.WindowsEventService
         {
             // todo: don't hardcode
             const string computerDeviceId = "7d115c0c-6181-4965-bceb-449781ecd27a";
-            const string serverUrl = "http://192.168.1.126:8084";
+            const string serverUrl = "http://192.168.1.125:8084";
 
             using (var client = new Communication.ClientApi.Client(serverUrl))
                 await client.UpdateDevicePowerStatus(new Guid(computerDeviceId), isPoweredOn);

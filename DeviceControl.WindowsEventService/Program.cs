@@ -1,4 +1,5 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.ServiceProcess;
 
 namespace DeviceControl.WindowsEventService
 {
@@ -9,12 +10,14 @@ namespace DeviceControl.WindowsEventService
         /// </summary>
         static void Main()
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
-            {
-                new EventService()
-            };
-            ServiceBase.Run(ServicesToRun);
+            var eventService = new EventService();
+#if DEBUG
+            eventService.TestStart(new string[0]);
+            Console.ReadLine();
+            eventService.TestStop();
+#else
+            ServiceBase.Run(new [] { eventService });
+#endif
         }
     }
 }
