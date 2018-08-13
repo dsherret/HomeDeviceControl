@@ -3,6 +3,9 @@ using System;
 
 namespace HomeDeviceControl.Communication.Server
 {
+    /// <summary>
+    /// Value listener for device power status events.
+    /// </summary>
     public class DevicePowerStatusReceiver : IValueListener<DevicePowerStatus>
     {
         public class DevicePowerStatusChangedEventArgs : EventArgs
@@ -10,14 +13,9 @@ namespace HomeDeviceControl.Communication.Server
             public DevicePowerStatus DevicePowerStatus { get; internal set; }
         }
 
-        public DevicePowerStatusReceiver(string route)
-        {
-            UrlRoute = route;
-        }
-
         public event EventHandler<DevicePowerStatusChangedEventArgs> PowerStatusChanged;
 
-        public string UrlRoute { get; }
+        public string UrlRoute { get; } = Routes.DevicePowerStatus;
 
         public void OnValueReceived(DevicePowerStatus devicePowerStatus)
         {
