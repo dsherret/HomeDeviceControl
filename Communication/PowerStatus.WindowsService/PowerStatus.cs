@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace HomeDeviceControl.Communication.WindowsEventService
+namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
     public static class PowerStatus
     {

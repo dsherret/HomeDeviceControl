@@ -1,7 +1,7 @@
 ﻿using HomeDeviceControl.Core;
 using System.Management;
 
-namespace HomeDeviceControl.Communication.WindowsEventService
+namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
     public class PowerEventListener
     {

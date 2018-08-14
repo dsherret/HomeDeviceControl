@@ -3,7 +3,7 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace HomeDeviceControl.Communication.WindowsEventService
+namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
     public partial class EventService : ServiceBase
     {

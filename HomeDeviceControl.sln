@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Test", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Communication.PowerStatus.Client", "Communication\PowerStatus.Client\HomeDeviceControl.Communication.PowerStatus.Client.csproj", "{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.WindowsEventService", "Communication\WindowsEventService\HomeDeviceControl.Communication.WindowsEventService.csproj", "{8E472613-706C-4CD9-9A6A-BDC86EBF7152}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.PowerStatus.WindowsService", "Communication\PowerStatus.WindowsService\HomeDeviceControl.Communication.PowerStatus.WindowsService.csproj", "{8E472613-706C-4CD9-9A6A-BDC86EBF7152}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.Common", "Communication\Common\HomeDeviceControl.Communication.Common.csproj", "{0F6C5635-8CC0-40B9-BC0F-3736D42AD4C0}"
 EndProject

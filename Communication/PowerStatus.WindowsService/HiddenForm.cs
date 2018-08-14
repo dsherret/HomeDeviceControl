@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace HomeDeviceControl.Communication.WindowsEventService
+namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
     // This is necessary to create a message loop in order to listen to events on SystemEvents.
     // See https://msdn.microsoft.com/en-us/library/microsoft.win32.systemevents(v=vs.110).aspx for more details.

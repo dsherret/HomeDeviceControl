@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HomeDeviceControl.Communication.WindowsEventService {
+namespace HomeDeviceControl.Communication.PowerStatus.WindowsService {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HomeDeviceControl.Communication.WindowsEventService")]
+[assembly: AssemblyTitle("HomeDeviceControl.Communication.PowerStatus.WindowsService")]
 [assembly: AssemblyDescription("Listens for power events and sends information to the device control server.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HomeDeviceControl.Communication.WindowsEventService")]
+[assembly: AssemblyProduct("HomeDeviceControl.Communication.PowerStatus.WindowsService")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

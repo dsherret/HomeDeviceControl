@@ -12,4 +12,4 @@ dotnet HomeDeviceControl.Communication.PowerStatus.Client.dll 09E9E275-5C73-4FD0
 
 ## Windows
 
-Use the [WindowsEventService](../WindowsEventService) on Windows.
+Use the [PowerStatus.WindowsService](../PowerStatus.WindowsService) on Windows.

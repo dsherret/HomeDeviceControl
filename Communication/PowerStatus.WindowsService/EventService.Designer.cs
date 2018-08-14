@@ -1,4 +1,4 @@
-﻿namespace HomeDeviceControl.Communication.WindowsEventService
+﻿namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
     partial class EventService
     {
