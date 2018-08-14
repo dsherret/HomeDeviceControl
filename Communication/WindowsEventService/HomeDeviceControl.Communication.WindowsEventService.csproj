@@ -63,6 +63,7 @@
     <Compile Include="HiddenForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PowerEventListener.cs" />
     <Compile Include="PowerStatus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
