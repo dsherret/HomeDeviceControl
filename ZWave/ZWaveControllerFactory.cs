@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZWave;
 
 namespace HomeDeviceControl.ZWave
 {

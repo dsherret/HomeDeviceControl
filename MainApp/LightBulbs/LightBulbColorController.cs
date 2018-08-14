@@ -78,7 +78,7 @@ namespace HomeDeviceControl.MainApp.LightBulbs
 
         private static int GetTemperatureForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay >= new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(6, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
                 return 2000;
             return GetTemperatureForAltitude(state.SunAltitude);
         }

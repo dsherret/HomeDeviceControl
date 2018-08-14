@@ -66,9 +66,10 @@ namespace HomeDeviceControl.MainApp.LightBulbs
 
         private static int GetBrightnessForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 0, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(0, 30, 0))
+            // beware of the logic here when changing the values to be before or after midnight
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 0, 0) && state.CurrentTime.TimeOfDay < new TimeSpan(23, 45, 0))
                 return 50;
-            if (state.CurrentTime.TimeOfDay >= new TimeSpan(0, 30, 0) && state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(23, 45, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
                 return 10;
             return 100;
         }
