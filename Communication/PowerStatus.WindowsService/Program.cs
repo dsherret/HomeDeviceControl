@@ -1,6 +1,5 @@
 ﻿using HomeDeviceControl.Core;
 using System;
-using System.ServiceProcess;
 
 namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {

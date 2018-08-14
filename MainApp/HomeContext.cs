@@ -2,10 +2,11 @@
 using HomeDeviceControl.Core;
 using HomeDeviceControl.Core.Utils;
 using HomeDeviceControl.MainApp.LightBulbs;
+using System;
 
 namespace HomeDeviceControl.MainApp
 {
-    public class HomeContext
+    public sealed class HomeContext : IDisposable
     {
         public HomeContext()
         {
@@ -24,6 +25,13 @@ namespace HomeDeviceControl.MainApp
                 LightBulbColorController.HandleLightBulb(e.Value);
                 LightBulbBrightnessController.HandleLightBulb(e.Value);
             };
+        }
+
+        public void Dispose()
+        {
+            LightBulbFactory.Dispose();
+            LightBulbColorController.Dispose();
+            LightBulbBrightnessController.Dispose();
         }
 
         public LightBulbFactory LightBulbFactory { get; }

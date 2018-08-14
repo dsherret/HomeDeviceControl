@@ -25,6 +25,11 @@ namespace HomeDeviceControl.MainApp
         public int ServerPort => int.Parse(_configuration.GetSection("General")["ServerPort"]);
         public string ZWavePort => _configuration.GetSection("General")["ZWavePort"];
 
+        /// <summary>
+        /// How often the application state should be updated.
+        /// </summary>
+        public double UpdateIntervalSeconds => double.Parse(_configuration.GetSection("General")["UpdateIntervalSeconds"]);
+
         public Guid SunroomComputerId => Guid.Parse(_configuration.GetSection("Sunroom")["ComputerId"]);
         public Guid SunroomLightId => Guid.Parse(_configuration.GetSection("Sunroom")["LightId"]);
 

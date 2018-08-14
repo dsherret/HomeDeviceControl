@@ -1,7 +1,4 @@
-﻿using HomeDeviceControl.Communication.Server;
-using HomeDeviceControl.Core;
-using HomeDeviceControl.Core.Environment;
-using HomeDeviceControl.MainApp.Config;
+﻿using HomeDeviceControl.Core;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,46 +11,20 @@ namespace HomeDeviceControl.MainApp
         {
             Logger.Configure("log4net.config");
 
-            var homeContext = new HomeContext();
-            var server = await RunServerAsync(homeContext);
+            var exitEvent = new ManualResetEvent(false);
 
-            SunroomConfig.Setup(homeContext);
-
-            // hook up stuff that could change
-            var sunCalculator = new SunCalculator(() => new GeoLocation
+            Console.CancelKeyPress += (sender, e) =>
             {
-                Latitute = Settings.Default.Latitude,
-                Longitude = Settings.Default.Longitude
-            });
-            var timer = new System.Timers.Timer();
-            timer.Interval = 30_000; // todo: move to settings file
-            timer.Elapsed += (sender, e) =>
-            {
-                UpdateState();
+                e.Cancel = true;
+                exitEvent.Set();
             };
-            timer.Start();
-            UpdateState();
 
-            new ManualResetEvent(false).WaitOne();
-
-            server.Dispose();
-
-            void UpdateState()
+            using (var appRunner = new MainAppRunner())
             {
-                homeContext.HomeStateContainer.UpdateState(state =>
-                {
-                    state.SunAltitude = sunCalculator.GetSunAltitude(DateTime.Now);
-                    state.CurrentTime = DateTime.Now;
-                });
-            }
-        }
+                await appRunner.StartAsync();
 
-        private static async Task<Server> RunServerAsync(HomeContext homeContext)
-        {
-            var server = new Server(Settings.Default.ServerHostname, Settings.Default.ServerPort);
-            server.AddValueListener(homeContext.DevicePowerStatusReceiver);
-            await server.RunAsync();
-            return server;
+                exitEvent.WaitOne();
+            }
         }
     }
 }
