@@ -1,4 +1,4 @@
-﻿# Device Controls - Windows Event Service
+﻿# Power Status - Windows Service
 
 This service listens for power events of a windows computer (ex. computer sleep or resume) and lets the server know about it.
 

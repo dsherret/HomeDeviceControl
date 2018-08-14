@@ -35,6 +35,8 @@ Where my computer is.
 
 ## Code Overview
 
+All libraries are .net standard. Applications are .net core except for the windows service, which is a .net framework application.
+
 - [`MainApp`](MainApp) - Central server/application for controlling the entire system. I'm currently running this on a Mac.
     - Controls light bulbs temperature, colour, and brightness.
     - Runs a server which devices can send their power status to.
@@ -46,5 +48,3 @@ Where my computer is.
 - [`Core`](Core) - Used by the `MainApp` for setting everything up. Contains common classes such as light bulbs, sensors, utilities, etc.
 - [`Plugins`](Plugins) - Implement device specific implementations for general `Core` interfaces (ex. `YeeLightBulb` implements `ILightBulb`)
 - [`ZWave`](ZWave) - Communicates with a plugged in z-wave USB stick.
-
-All libraries are .net standard. `MainApp` and `Communication/PowerStatus.Client` are .net core. `Communication/PowerStatus.WindowsService` is a .net framework application.

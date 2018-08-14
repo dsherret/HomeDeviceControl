@@ -18,7 +18,7 @@ namespace HomeDeviceControl.Communication.ClientApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="serverUrl">The address to communicate with the server at.</param>
+        /// <param name="serverUrl">The address to communicate with the server at (Ex. http://192.168.1.125:8084).</param>
         public Client(string serverUrl)
         {
             _serverUrl = serverUrl;
