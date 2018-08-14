@@ -3,27 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl", "HomeDeviceControl\HomeDeviceControl.csproj", "{7E890249-657E-4FB0-90C3-D1421758677C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.MainApp", "MainApp\HomeDeviceControl.MainApp.csproj", "{7E890249-657E-4FB0-90C3-D1421758677C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Test", "HomeDeviceControl.Test\HomeDeviceControl.Test.csproj", "{47B65979-2DB4-4891-A186-39F08F6DE4FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Test", "Test\HomeDeviceControl.Test.csproj", "{47B65979-2DB4-4891-A186-39F08F6DE4FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Communication.PowerStatus.Client", "HomeDeviceControl.Communication.PowerStatus.Client\HomeDeviceControl.Communication.PowerStatus.Client.csproj", "{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeDeviceControl.Communication.PowerStatus.Client", "Communication\PowerStatus.Client\HomeDeviceControl.Communication.PowerStatus.Client.csproj", "{02DAD297-C6E1-47A1-9E6D-FF21C4F2E89B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.WindowsEventService", "HomeDeviceControl.WindowsEventService\HomeDeviceControl.WindowsEventService.csproj", "{8E472613-706C-4CD9-9A6A-BDC86EBF7152}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.WindowsEventService", "Communication\WindowsEventService\HomeDeviceControl.Communication.WindowsEventService.csproj", "{8E472613-706C-4CD9-9A6A-BDC86EBF7152}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.Common", "HomeDeviceControl.Communication.Common\HomeDeviceControl.Communication.Common.csproj", "{0F6C5635-8CC0-40B9-BC0F-3736D42AD4C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.Common", "Communication\Common\HomeDeviceControl.Communication.Common.csproj", "{0F6C5635-8CC0-40B9-BC0F-3736D42AD4C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.ClientApi", "HomeDeviceControl.Communication.ClientApi\HomeDeviceControl.Communication.ClientApi.csproj", "{06CF8969-88B7-46A7-A5ED-337BD3C19941}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.ClientApi", "Communication\ClientApi\HomeDeviceControl.Communication.ClientApi.csproj", "{06CF8969-88B7-46A7-A5ED-337BD3C19941}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.Server", "HomeDeviceControl.Communication.Server\HomeDeviceControl.Communication.Server.csproj", "{00EB8C14-1008-4A7D-8BB1-6BCF93E17A4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Communication.Server", "Communication\Server\HomeDeviceControl.Communication.Server.csproj", "{00EB8C14-1008-4A7D-8BB1-6BCF93E17A4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Core", "HomeDeviceControl.Core\HomeDeviceControl.Core.csproj", "{49A2CCAC-ABC9-4133-B1F8-631C71E31E53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Core", "Core\HomeDeviceControl.Core.csproj", "{49A2CCAC-ABC9-4133-B1F8-631C71E31E53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Plugin.Yeelight", "HomeDeviceControl.Plugin.Yeelight\HomeDeviceControl.Plugin.Yeelight.csproj", "{3AFCA6C6-1F97-4490-BE6E-89BE68258E1D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Plugin.Yeelight", "Plugins\Yeelight\HomeDeviceControl.Plugin.Yeelight.csproj", "{3AFCA6C6-1F97-4490-BE6E-89BE68258E1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Plugin.ZoozSensor", "HomeDeviceControl.Plugin.ZoozSensor\HomeDeviceControl.Plugin.ZoozSensor.csproj", "{E1FA123B-8DC3-44B8-A42D-FC0611E1DF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.Plugin.ZoozSensor", "Plugins\ZoozSensor\HomeDeviceControl.Plugin.ZoozSensor.csproj", "{E1FA123B-8DC3-44B8-A42D-FC0611E1DF34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.ZWave", "HomeDeviceControl.ZWave\HomeDeviceControl.ZWave.csproj", "{D4ACD1B5-E869-4E4F-B43E-5F979AF47979}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeDeviceControl.ZWave", "ZWave\HomeDeviceControl.ZWave.csproj", "{D4ACD1B5-E869-4E4F-B43E-5F979AF47979}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

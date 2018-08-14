@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SerialPortStream" Version="2.1.4" />
+    <PackageReference Include="ZWave4Net" Version="1.0.0.161" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\HomeDeviceControl.Core.csproj" />
+  </ItemGroup>
+
+</Project>
