@@ -1,4 +1,5 @@
 ﻿using HomeDeviceControl.Core;
+using System;
 using System.Management;
 
 namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
@@ -43,12 +44,14 @@ namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 
         private async void PowerEventArrived(object sender, EventArrivedEventArgs e)
         {
-            const string SUSPEND_EVENT = "4";
-            const string RESUME_EVENT = "7";
+            const ushort SUSPEND_EVENT = 4;
+            const ushort RESUME_EVENT = 7;
 
             foreach (PropertyData pd in e.NewEvent.Properties)
             {
-                switch (pd?.Value?.ToString())
+                var value = Convert.ToUInt16(pd?.Value);
+
+                switch (value)
                 {
                     case SUSPEND_EVENT:
                         await PowerStatus.SendAsync(false);
