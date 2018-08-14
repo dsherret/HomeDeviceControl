@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HomeDeviceControl.Communication.WindowsEventService" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ComputerDeviceId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">7d115c0c-6181-4965-bceb-449781ecd27a</Value>
+    </Setting>
+    <Setting Name="ServerUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://192.168.1.125:8084</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
