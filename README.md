@@ -12,7 +12,7 @@ I created this because I didn't think it was possible to get as good of an exper
 * At 11:00 PM the lights turn red and stay that way until I turn them off or five in the morning occurs—at which point they would go back to being adjusted based on the sun altitude.
 * Bulbs are automatically detected (zero configuration).
     * Discovery happens on application startup.
-    * For a light bulb initially gaining power (ex. being turned on via a non-smart lightswitch), it will connect and then broadcast its status on the network. Its broadcast will then be picked up and it will be sent the correct temperature, colour, and brightness based on the current time. Unfortunately this process takes about 8 seconds.
+    * For a light bulb initially gaining power (ex. being turned on via a non-smart lightswitch), it will connect and then broadcast its status on the network. Its broadcast will then be picked up, the bulb will be connected to, and it will be sent the correct temperature, colour, and brightness based on the current time. Unfortunately this process takes about 8 seconds.
 * Any property of the lights can be manually overridden and the system won't automatically adjust that property until the power has been turned on and off.
     * For example, I could change the colour of a light bulb to green using the device's mobile app and it would stay green. Then if I wanted to return to the system's automatic colour control, I only need to turn the light bulb on and off using the mobile app or a light switch.
 * Currently only supports [Yeelight bulbs](https://www.amazon.ca/Xiaomi-YLDP03YL-Yeelight-Dimmable-Equivalent/dp/B077GCYCT7/), but the system is extensible to work with other bulbs. I didn't go with phillips hue because they require a hub and are more expensive.
@@ -24,7 +24,7 @@ Where my computer is.
 * If it's dark:
     * Walk in and a [motion detector](https://www.amazon.ca/ZOOZ-Z-Wave-Sensor-Temperature-Humidity/dp/B01AKSO80O) will trigger the lights to come on at a lower brightness than usual.
     * Waking up the computer will cause the lights to fully come on.
-    * Sleeping the computer will cause the lights to dim. Once no motion has been detected in the room, the lights will turn off automatically at that point.
+    * Sleeping the computer will cause the lights to dim. Once no motion has been detected in the room, the lights will turn off automatically in a certain amount of seconds.
 * If it's not dark:
     * The lights will stay off. Once it gets dark the lights turn on automatically if the computer is on.
 * I can force the light to be on by using the light switch or by using the device's mobile app.
