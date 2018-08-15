@@ -54,7 +54,7 @@ namespace HomeDeviceControl.Plugin.Yeelight
 
         public async Task<bool> GetPowerAsync()
         {
-            var result = await GetPropertyAsync(YeelightAPI.Models.PROPERTIES.power);
+            var result = await GetPropertyAsync(YeelightAPI.Models.PROPERTIES.power, value => value);
             return result == "on";
         }
 
@@ -132,24 +132,41 @@ namespace HomeDeviceControl.Plugin.Yeelight
 
         private async Task<int> GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES property)
         {
-            return int.Parse(await GetPropertyAsync(property));
+            return await GetPropertyAsync(property, int.Parse);
         }
 
-        private async Task<string> GetPropertyAsync(YeelightAPI.Models.PROPERTIES property)
+        private async Task<T> GetPropertyAsync<T>(YeelightAPI.Models.PROPERTIES property, Func<string, T> parseValue)
         {
-            // temporarily need to get all the properties because of a bug getting single properties
-            // (it sometimes won't return the correct property requested)
-            Dictionary<YeelightAPI.Models.PROPERTIES, object> properties = null;
-            for (var i = 0; i < 10; i++)
+            // temporarily need to do this because of problems in Yeelight API
+            T result = default;
+            const int MAX_TRIES = 10;
+            int i;
+
+            for (i = 0; i < MAX_TRIES; i++)
             {
-                properties = await _device.GetAllProps();
-                if (properties != null)
-                    break;
+                try
+                {
+                    var stringResult = (await _device.GetProp(property)) as string;
+                    if (stringResult != null)
+                    {
+                        result = parseValue(stringResult);
+                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // don't bother logging everything...
+                    if (i > 6)
+                        Logger.Log(this, LogLevel.Error, "Problem getting Yeelight bulb property.", ex);
+                }
+
                 await Task.Delay(100 * (i + 1));
             }
-            if (properties == null)
+
+            if (i == MAX_TRIES)
                 throw new TimeoutException("Could not get the yeelight properties within the timeout.");
-            return properties[property] as string;
+
+            return result;
         }
 
         private bool GetParamValue<T>(Dictionary<YeelightAPI.Models.PROPERTIES, object> parameters, YeelightAPI.Models.PROPERTIES prop, out T value)
