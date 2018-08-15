@@ -37,7 +37,7 @@ Where my computer is.
 
 All libraries are .net standard. Applications are .net core except for the windows service, which is a .net framework application.
 
-- [`MainApp`](MainApp) - Central server/application for controlling the entire system. I'm currently running this on a Mac.
+- [`MainApp`](MainApp) - Central server/application for controlling the entire system. I'm currently running this on a Mac that's always on.
     - Controls light bulbs temperature, colour, and brightness.
     - Runs a server which devices can send their power status to.
         - Ex. The computer tells the server it's gone to sleep and the server will dim the light in that room until there hasn't been movement for X seconds. After X seconds it will turn off the light.)
