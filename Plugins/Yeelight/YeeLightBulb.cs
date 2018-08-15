@@ -54,7 +54,13 @@ namespace HomeDeviceControl.Plugin.Yeelight
 
         public async Task<bool> GetPowerAsync()
         {
-            var result = await GetPropertyAsync(YeelightAPI.Models.PROPERTIES.power, value => value);
+            var result = await GetPropertyAsync(YeelightAPI.Models.PROPERTIES.power, value =>
+            {
+                // may return some other property for some reason, so throw and try again...
+                if (value != "on" && value != "off")
+                    throw new FormatException($"Invalid power value: {value}");
+                return value;
+            });
             return result == "on";
         }
 
