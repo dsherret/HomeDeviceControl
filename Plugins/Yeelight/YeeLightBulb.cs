@@ -84,8 +84,8 @@ namespace HomeDeviceControl.Plugin.Yeelight
         public Task SetPowerAsync(bool power)
         {
             if (power)
-                return _device.TurnOn(1000);
-            return _device.TurnOff(1000);
+                return TryDoAction(() => _device.TurnOn(1000), GetPowerAsync, () => "Error turning device on.");
+            return TryDoAction(() => _device.TurnOff(1000), async () => !(await GetPowerAsync()), () => "Error turning device off.");
         }
 
         public async Task SetBrightnessAsync(int brightness)
@@ -94,7 +94,9 @@ namespace HomeDeviceControl.Plugin.Yeelight
             if (await GetBrightnessAsync() == brightness)
                 return;
 
-            await _device.SetBrightness(brightness, 1000);
+            await TryDoAction(() => _device.SetBrightness(brightness, 1000),
+                async () => await GetBrightnessAsync() == brightness,
+                () => $"Problem setting brightness: {brightness}");
         }
 
         public async Task SetColorAsync(Color color)
@@ -102,7 +104,9 @@ namespace HomeDeviceControl.Plugin.Yeelight
             if (await GetColorAsync() == color && await GetColorModeAsync() == ColorMode.Color)
                 return;
 
-            await _device.SetRGBColor(color.R, color.G, color.B, 1000);
+            await TryDoAction(() => _device.SetRGBColor(color.R, color.G, color.B, 1000),
+                async () => await GetColorAsync() == color,
+                () => $"Problem setting color: {color}");
         }
 
         public async Task SetTemperatureAsync(int temperature)
@@ -114,7 +118,9 @@ namespace HomeDeviceControl.Plugin.Yeelight
             if (await GetTemperatureAsync() == temperature && await GetColorModeAsync() == ColorMode.Temperature)
                 return;
 
-            await _device.SetColorTemperature(temperature, 1000);
+            await TryDoAction(() => _device.SetColorTemperature(temperature, 1000),
+                async () => await GetTemperatureAsync() == temperature,
+                () => $"Problem setting temperature: {temperature}");
         }
 
         private Task<int> GetColorModeAsync()
@@ -134,6 +140,23 @@ namespace HomeDeviceControl.Plugin.Yeelight
                 TemperatureChanged?.Invoke(this, new LightBulbPropertyChangedEventArgs<int>((int)temperature));
             if (GetParamValue(result.Params, YeelightAPI.Models.PROPERTIES.rgb, out decimal color))
                 ColorChanged?.Invoke(this, new LightBulbPropertyChangedEventArgs<Color>(Color.FromArgb((int)color)));
+        }
+
+        private async Task TryDoAction(Func<Task> action, Func<Task<bool>> verification, Func<string> getErrorMessage)
+        {
+            // unfortunately need to do this because something downstream is unreliable
+            const int MAX_TRIES = 10;
+            for (var i = 0; i < MAX_TRIES; i++)
+            {
+                await action();
+
+                if (await verification())
+                    return;
+
+                await Task.Delay(100 * (i + 1));
+            }
+
+            Logger.Log(this, LogLevel.Error, getErrorMessage());
         }
 
         private async Task<int> GetPropertyAsIntAsync(YeelightAPI.Models.PROPERTIES property)
@@ -161,8 +184,8 @@ namespace HomeDeviceControl.Plugin.Yeelight
                 }
                 catch (Exception ex)
                 {
-                    // don't bother logging everything...
-                    if (i > 6)
+                    // don't bother logging until the end
+                    if (i == MAX_TRIES - 1)
                         Logger.Log(this, LogLevel.Error, "Problem getting Yeelight bulb property.", ex);
                 }
 
