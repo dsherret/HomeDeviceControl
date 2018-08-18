@@ -1,7 +1,5 @@
 ﻿using HomeDeviceControl.Core;
 using System.ServiceProcess;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 {
@@ -24,21 +22,30 @@ namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
 
         protected async override void OnStart(string[] args)
         {
-            Logger.Log(this, LogLevel.Info, "Service starting...");
-            await PowerStatus.SendAsync(true);
-            new Thread(RunMessagePump).Start();
             Logger.Log(this, LogLevel.Info, "Service started.");
+            await PowerStatus.SendAsync(true);
         }
 
         protected override void OnStop()
         {
             Logger.Log(this, LogLevel.Info, "Service stopped.");
-            Application.Exit();
         }
 
-        private void RunMessagePump()
+        protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
         {
-            Application.Run(new HiddenForm());
+            Logger.Log(this, LogLevel.Info, $"Received power event: {powerStatus}");
+
+            switch (powerStatus)
+            {
+                case PowerBroadcastStatus.Suspend:
+                    PowerStatus.SendAsync(false).Wait();
+                    break;
+                case PowerBroadcastStatus.ResumeSuspend:
+                    PowerStatus.SendAsync(true).Wait();
+                    break;
+            }
+
+            return base.OnPowerEvent(powerStatus);
         }
     }
 }

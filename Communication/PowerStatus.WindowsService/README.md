@@ -9,8 +9,7 @@ This service listens for power events of a windows computer (ex. computer sleep 
     ```bat
     SC CREATE "Home Device Control - Power Status" binpath="C:\HomeDeviceControl\HomeDeviceControl.Communication.PowerStatus.WindowsService.exe"
     ```
-3. In the service's properties go to the "Log On" tab and check "Allow service to interact with desktop". This will provide the service a message loop so it can receive power events ([Read more](https://msdn.microsoft.com/en-us/library/microsoft.win32.systemevents(v=vs.110).aspx)).
-4. Change the settings in `HomeDeviceControl.Communication.PowerStatus.WindowsService.exe.config` to specify the generated GUID for the device and the url to contact the [Server](../Server).
+3. Change the settings in `HomeDeviceControl.Communication.PowerStatus.WindowsService.exe.config` to specify the generated GUID for the device and the url to contact the [Server](../Server).
 
 ## Why? System events unreliable
 

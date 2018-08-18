@@ -10,10 +10,17 @@ namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
         {
             Logger.Log(typeof(PowerStatus), LogLevel.Info, $"Sending power status: {isPoweredOn}.");
 
-            using (var client = new ClientApi.Client(Settings.Default.ServerUrl))
-                await client.UpdateDevicePowerStatus(Guid.Parse(Settings.Default.ComputerDeviceId), isPoweredOn);
+            try
+            {
+                using (var client = new ClientApi.Client(Settings.Default.ServerUrl))
+                    await client.UpdateDevicePowerStatus(Guid.Parse(Settings.Default.ComputerDeviceId), isPoweredOn);
 
-            Logger.Log(typeof(PowerStatus), LogLevel.Info, $"Sent power status: {isPoweredOn}.");
+                Logger.Log(typeof(PowerStatus), LogLevel.Info, $"Sent power status: {isPoweredOn}.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(PowerStatus), LogLevel.Error, "Problem sending power status.", ex);
+            }
         }
     }
 }

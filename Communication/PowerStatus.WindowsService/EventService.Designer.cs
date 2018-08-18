@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "Device Control - Windows Event Service";
+            this.ServiceName = "Home Device Control - Power Status Service";
+            this.CanHandlePowerEvent = true;
         }
 
         #endregion
