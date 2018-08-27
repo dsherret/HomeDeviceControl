@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HomeDeviceControl.Communication.ClientApi
@@ -38,25 +39,25 @@ namespace HomeDeviceControl.Communication.ClientApi
         /// </summary>
         /// <param name="deviceId">Device identifier.</param>
         /// <param name="isPoweredOn">If the device is powered on.</param>
-        public Task UpdateDevicePowerStatus(Guid deviceId, bool isPoweredOn)
+        public Task UpdateDevicePowerStatus(Guid deviceId, bool isPoweredOn, CancellationToken token = default)
         {
             return ClientPostValueAsync(Routes.DevicePowerStatus, new DevicePowerStatus
             {
                 DeviceId = deviceId,
                 IsPoweredOn = isPoweredOn
-            });
+            }, token);
         }
 
-        private Task ClientPostValueAsync<T>(string route, T value)
+        private Task ClientPostValueAsync<T>(string route, T value, CancellationToken token)
         {
             var content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
-            return ClientPostAsync(route, content);
+            return ClientPostAsync(route, content, token);
         }
 
-        private async Task ClientPostAsync(string route, HttpContent content)
+        private async Task ClientPostAsync(string route, HttpContent content, CancellationToken token)
         {
             var url = _serverUrl + route;
-            var response = await _client.PostAsync(url, content);
+            var response = await _client.PostAsync(url, content, token);
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Error connecting to server: {response.StatusCode}");
         }

@@ -26,8 +26,9 @@ namespace HomeDeviceControl.Communication.PowerStatus.WindowsService
             await PowerStatus.SendAsync(true);
         }
 
-        protected override void OnStop()
+        protected async override void OnStop()
         {
+            await PowerStatus.SendAsync(false);
             Logger.Log(this, LogLevel.Info, "Service stopped.");
         }
 
