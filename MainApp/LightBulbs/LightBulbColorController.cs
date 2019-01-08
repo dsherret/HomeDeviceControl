@@ -78,27 +78,42 @@ namespace HomeDeviceControl.MainApp.LightBulbs
 
         private static int GetTemperatureForState(HomeState state)
         {
-            if (state.CurrentTime.TimeOfDay >= new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
-                return 2000;
-            return GetTemperatureForAltitude(state.SunAltitude);
-        }
-
-        private static int GetTemperatureForAltitude(double altitude)
-        {
+            // todo: clean up this code... this was quick and dirty
             const double MAX_ALTITUDE = 5;
             const double MIN_ALTITUDE = -12;
             const int MAX_TEMP = 4500;
             const int MIN_TEMP = 2500;
-            if (altitude > MAX_ALTITUDE)
+            const int TEMP_RANGE = MAX_TEMP - MIN_TEMP;
+
+            if (state.CurrentTime.TimeOfDay >= new TimeSpan(22, 30, 0) || state.CurrentTime.TimeOfDay < new TimeSpan(5, 0, 0))
+                return 2000;
+            if (state.SunAltitude > MAX_ALTITUDE)
                 return MAX_TEMP;
-            if (altitude < MIN_ALTITUDE)
-                return MIN_TEMP;
 
-            var altitudeRange = MAX_ALTITUDE - MIN_ALTITUDE;
-            var percent = (altitude - MIN_ALTITUDE) / altitudeRange;
+            return Math.Max(GetTemperatureForTime(state.CurrentTime.TimeOfDay), GetTemperatureForAltitude(state.SunAltitude));
 
-            var tempRange = MAX_TEMP - MIN_TEMP;
-            return (int)(tempRange * percent + MIN_TEMP);
+            int GetTemperatureForTime(TimeSpan timeOfDay)
+            {
+                var minTimeOfDay = new TimeSpan(15, 0, 0);
+                var maxTimeOfDay = new TimeSpan(22, 30, 0);
+                if (timeOfDay <= minTimeOfDay || timeOfDay >= maxTimeOfDay)
+                    return MIN_TEMP; // this is very dependent on the Math.Max above
+
+                var percent = 1 - (timeOfDay - minTimeOfDay) / (maxTimeOfDay - minTimeOfDay);
+                return (int)(TEMP_RANGE * percent + MIN_TEMP);
+            }
+
+            int GetTemperatureForAltitude(double altitude)
+            {
+                if (altitude > MAX_ALTITUDE)
+                    return MAX_TEMP;
+                if (altitude < MIN_ALTITUDE)
+                    return MIN_TEMP;
+
+                var altitudeRange = MAX_ALTITUDE - MIN_ALTITUDE;
+                var percent = 1 - (altitude - MIN_ALTITUDE) / altitudeRange;
+                return (int)(TEMP_RANGE * percent + MIN_TEMP);
+            }
         }
     }
 }

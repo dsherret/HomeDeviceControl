@@ -109,7 +109,7 @@ namespace HomeDeviceControl.MainApp
         public HomeState GetCurrentState()
         {
             lock (_lock)
-                return _state;
+                return _state.Clone();
         }
 
         public async void OnStateUpdated(Func<StateChangedEventArgs, Task> action)
